@@ -1,0 +1,39 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	   http://code.alibabatech.com/schema/dubbo
+	   http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->
+	<dubbo:application name="niuka_o2o_server"/>
+
+	<!-- 使用zookeeper注册中心暴露服务地址 -->
+	<!-- 注册中心地址 -->
+	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" />
+
+	<dubbo:consumer timeout="50000" />
+
+	<!-- 代理商模块-->
+	<dubbo:reference interface="com.niuka.agent.rpc.AgentLevelService" id="agentlevelservice" retries="0"  />
+	<dubbo:reference interface="com.niuka.agent.rpc.AgentService" id="agentservice"   retries="0"  />
+	<dubbo:reference interface="com.niuka.agent.rpc.AgentRechargeLogService" id="agentRechargeLogService"  retries="0" />
+
+	<!-- 用户模块-->
+	<dubbo:reference interface="com.niuka.user.rpc.UserService" id="userservice"  retries="0" />
+	<dubbo:reference interface="com.niuka.user.rpc.AuthenticationRpcService" id="athenticationrpcservice" retries="0"  />
+	<dubbo:reference interface="com.niuka.user.rpc.UserRoleService" id="userroleservice" retries="0"  />
+	<dubbo:reference interface="com.niuka.user.rpc.RoleService" id="roleservice"  retries="0" />
+	<dubbo:reference interface="com.niuka.user.rpc.AppService" id="appservice" retries="0"  />
+
+	<!-- 系统模块-->
+	<dubbo:reference interface="com.niuka.systemset.rpc.AreaService" id="areaservice" retries="0"  />
+	<dubbo:reference interface="com.niuka.systemset.rpc.ProvinceService" id="provinceservice" retries="0" />
+	<dubbo:reference interface="com.niuka.systemset.rpc.CityService" id="cityservice"  retries="0" />
+
+
+
+
+</beans>

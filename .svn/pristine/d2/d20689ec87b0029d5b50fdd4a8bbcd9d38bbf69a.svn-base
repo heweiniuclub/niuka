@@ -1,0 +1,232 @@
+<%@ page language="java" pageEncoding="utf-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<jsp:include page="../common/common.jsp">
+    <jsp:param name="title" value="代理商"/>
+</jsp:include>
+
+<script src="${_path}/js/common/area.js"></script>
+
+<div class="page-header">
+    <h1>
+        ${empty agent.id ? '添加' : '修改'}代理商
+    </h1>
+</div>
+
+
+<div class="row">
+    <div class="col-xs-12">
+        <form id="_editForm" class="form-horizontal" role="form">
+            <input type="hidden" name="id" value="${agent.id}">
+
+            <div class="form-group">
+                <label for="_agent_name" class="col-sm-3 control-label no-padding-right"><span
+                        class="form-star">*</span>代理商名称</label>
+
+                <div class="col-sm-9">
+                    <div class="clearfix help-validate">
+                        <input id="_agent_name" name="agent_name" type="text" value="${agent.agentName}"
+                               class="form-data col-xs-10 col-sm-5" placeholder="代理商名称"
+                               required="true" maxlength="64"/>
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label for="_agent_contacts_name" class="col-sm-3 control-label no-padding-right"><span
+                        class="form-star">*</span>代理商联系人姓名</label>
+
+                <div class="col-sm-9">
+                    <div class="clearfix help-validate">
+                        <input id="_agent_contacts_name" name="agent_contacts_name" type="text"
+                               value="${agent.agentContactsName}"
+                               class="form-data col-xs-10 col-sm-5" placeholder="代理商联系人姓名"
+                               required="true" maxlength="64"/>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label for="_agent_contacts_phone" class="col-sm-3 control-label no-padding-right"><span
+                        class="form-star">*</span>代理商联系人电话</label>
+                <div class="col-sm-9">
+                    <div class="clearfix help-validate">
+                        <input id="_agent_contacts_phone" name="agent_contacts_phone" type="text"
+                               value="${agent.agentContactsPhone}"
+                               class="form-data col-xs-10 col-sm-5" placeholder="代理商联系人电话"
+                               required="true" maxlength="64"/>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label  class="col-sm-3 control-label no-padding-right"><span
+                        class="form-star">*</span>代理商地区</label>
+                <div class="col-sm-9">
+                    <div class="clearfix help-validate" style="text-align: left">
+                        省份： <select id="province" name="province"></select>
+                        城市： <select id="city" name="city" >
+                                 <option value='0'>---请选择城市---</option>
+                              </select>
+                        地区： <select id="area" name="area" >
+                                 <option value='0'>---请选择区域---</option>
+                               </select>
+                    </div>
+                    <div class="clearfix help-validate" style="text-align: right;">
+                        <input  name="agent_address" type="text"
+                                value="${agent.agentAddress}"
+                                class="form-data col-xs-10 col-sm-5" placeholder="详细地址"
+                                required="true" maxlength="64"/>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="app_id" class="col-sm-3 control-label no-padding-right">
+                    <span class="form-star">*</span>选择应用</label>
+                <div class="col-sm-9">
+                    <div class="clearfix help-validate">
+                        <select id="app_id" name="app_id" >
+                            <c:forEach var="item" items="${apps}">
+                                <option value="${item.id}">${item.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="role_id" class="col-sm-3 control-label no-padding-right">
+                    <span class="form-star">*</span>选择角色</label>
+                <div class="col-sm-9">
+                    <div class="clearfix help-validate">
+                        <select id="role_id" name="role_id" >
+                        <c:forEach var="item" items="${roles}">
+                            <option value="${item.id}">${item.name}</option>
+                        </c:forEach>
+                    </select>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="clearfix form-actions">
+                <div class="col-md-offset-3 col-md-9">
+                    <button id="_submit" type="button" class="btn btn-info" data-loading-text="正在提交..."
+                            permission="/agent/save">
+                        <i class="ace-icon fa fa-check bigger-110"></i>
+                        提交
+                    </button>
+
+                    &nbsp; &nbsp; &nbsp;
+                    <button id="_cancle" class="btn" type="reset">
+                        <i class="ace-icon fa  fa-times bigger-110"></i>
+                        取消
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('.page-content-area').ace_ajax('loadScripts', scripts, function () {
+        jQuery(function ($) {
+
+            $.ajax({
+                type: "post",
+                url: "${_path}/systemSet/queryProvince",
+                data: "{}",
+                dataType : "json",
+                success: function (data) {
+                    for (var i = 0; i < data.data.result.length; i++) {
+                        var a = "<option value='" + data.data.result[i].id + "'>" + data.data.result[i].provinceName + "</option>";
+                        $("#province").append(a);
+                    }
+                }
+            });
+
+
+            $("#province").change(function () {
+                var data = {
+                    "pid": $("#province").val()
+                }
+                $("#city option").remove();
+                $("#area option").remove();
+                $.ajax({
+                    type : "post",
+                    url :  "${_path}/systemSet/queryCityByPid",
+                    data :data,
+                    dataType : "json",
+                    success : function(data) {
+                        $("#city").append("<option value='0'>---请选择城市---</option>");
+                        $("#area").append("<option value='0'>---请选择区域---</option>");
+                        for (var i = 0; i < data.data.result.length; i++) {
+                            var a = "<option value='" + data.data.result[i].id + "'>" + data.data.result[i].cityName + "</option>";
+                            $("#city").append(a);
+                        }
+                    }
+                })
+            });
+            $("#city").change(function () {
+                var data = {
+                    "cid": $("#city").val()
+                }
+                $("#area option").remove();
+                $.ajax({
+                    type : "post",
+                    url : "${_path}/systemSet/queryAreaByCid",
+                    data : data,
+                    dataType : "json",
+                    success : function(data) {
+                        $("#area").append("<option value='0'>---请选择区域---</option>");
+                        for (var i = 0; i < data.data.result.length; i++) {
+                            var a = "<option value='" + data.data.result[i].id + "'>" + data.data.result[i].areaName + "</option>";
+                            $("#area").append(a);
+                        }
+                    }
+                })
+            });
+
+            // 提交
+            $("#_submit").click(function () {
+                if ($('#_editForm').validate()) {
+                    var btn = $(this);
+                    btn.button('loading');
+                    $.post("${_path}/agent/save", $.formJson('_editForm'), function (d) {
+                        if (d) {
+                            btn.button('reset');
+                            if (d.code == 1) {
+                                $.aceRedirect("${_path}//agent/", "/index/");
+                            }
+                            else {
+                                $.gritter.add({text: d.message});
+                            }
+                        }
+                    }, 'json');
+                }
+            });
+
+            // 取消
+            $("#_cancle").click(function () {
+                $.aceRedirect("${_path}/agent", "/index/");
+            });
+
+            // 回车绑定
+            $(".form-data").bind('keypress', function (event) {
+                if (event.keyCode == "13") {
+                    event.preventDefault();
+                    $("#_submit").click();
+                }
+            });
+
+            // 权限处理
+            $.permission();
+        });
+    });
+</script>

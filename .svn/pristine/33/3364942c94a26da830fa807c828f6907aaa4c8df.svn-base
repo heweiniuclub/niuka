@@ -1,0 +1,64 @@
+package com.niuka.api.server.controller.admin;
+
+import com.niuka.common.annotation.LoginUser;
+import com.niuka.common.annotation.TokenManager;
+import com.niuka.common.controller.BaseController;
+import com.niuka.common.model.Result;
+import com.niuka.common.model.ResultCode;
+import com.niuka.common.validator.Validator;
+import com.niuka.common.validator.annotation.ValidateParam;
+import com.niuka.user.client.SessionUtils;
+import com.niuka.user.rpc.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+/**
+ * @author hewei
+ */
+@Api(tags = "个人中心")
+@Controller
+@RequestMapping("/admin/profile")
+public class ProfileController extends BaseController {
+
+	@Resource
+	private TokenManager tokenManager;
+	@Resource
+	private UserService userservice;
+
+	@ApiOperation("初始页")
+	@RequestMapping(method = RequestMethod.GET)
+	public String execute(Model model, HttpServletRequest request) {
+		LoginUser loginUser = tokenManager.validate(SessionUtils.getSessionUser(request).getToken());
+		if (loginUser != null) {
+			model.addAttribute("user", userservice.get(loginUser.getUserId()));
+		}
+		return "/admin/profile";
+	}
+
+	@ApiOperation("修改密码提交")
+	@RequestMapping(value = "/savePassword", method = RequestMethod.POST)
+	public @ResponseBody
+	Result save(
+			@ApiParam(value = "新密码", required = true) @ValidateParam({ Validator.NOT_BLANK }) String newPassword,
+			@ApiParam(value = "确认密码", required = true) @ValidateParam({ Validator.NOT_BLANK }) String confirmPassword,
+			HttpServletRequest request) {
+		LoginUser loginUser = tokenManager.validate(SessionUtils.getSessionUser(request).getToken());
+		if (loginUser != null) {
+			userservice.updatePassword(loginUser.getUserId(), newPassword);
+			return Result.createSuccessResult().setMessage("修改成功");
+		}
+		else {
+			return Result.create(ResultCode.VALIDATE_ERROR).setMessage("修改失败");
+		}
+	}
+}

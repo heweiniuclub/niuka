@@ -1,0 +1,123 @@
+package com.niuka.o2o.controller.systemset;
+
+import com.alibaba.fastjson.JSON;
+import com.niuka.agent.model.Agent;
+import com.niuka.agent.model.AgentLevel;
+import com.niuka.agent.rpc.AgentLevelService;
+import com.niuka.agent.rpc.AgentService;
+import com.niuka.common.controller.BaseController;
+import com.niuka.common.model.ExtendMap;
+import com.niuka.common.model.Pagination;
+import com.niuka.common.model.Result;
+import com.niuka.common.validator.Validator;
+import com.niuka.common.validator.annotation.ValidateParam;
+import com.niuka.systemset.model.Area;
+import com.niuka.systemset.model.City;
+import com.niuka.systemset.model.Province;
+import com.niuka.systemset.rpc.AreaService;
+import com.niuka.systemset.rpc.CityService;
+import com.niuka.systemset.rpc.ProvinceService;
+import com.niuka.user.client.SessionUser;
+import com.niuka.user.client.SessionUtils;
+import com.niuka.user.model.Role;
+import com.niuka.user.model.User;
+import com.niuka.user.rpc.RoleService;
+import com.niuka.user.rpc.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+
+
+/**
+ *  系统公共设置
+ *
+ * @author hewei
+ */
+@Api(tags = "系统设置")
+@Controller
+@RequestMapping("/systemSet")
+public class SystemSetController extends BaseController {
+
+    @Resource
+    private ProvinceService provinceservice;
+
+    @Resource
+    private CityService cityservice;
+
+    @Resource
+    private AreaService areaservice;
+
+    /**
+     * 查询省份列表
+     * @return
+     * @see [类、类#方法、类#成员]
+     */
+    @ApiOperation("查询所有的省份信息")
+    @RequestMapping(value = "queryProvince", method = {RequestMethod.POST})
+    public  @ResponseBody
+    Result queryProvince() {
+        Map<String,Object> map = new HashMap<String,Object>();
+        List<Province> provinces = new ArrayList<Province>();
+        try {
+            provinces = provinceservice.queryAllProvince();
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        map.put("result",provinces);
+        return  Result.createSuccessResult().setData(map);
+    }
+
+
+    /**
+     * 根据省份ID查询城市商圈列表
+     * @return
+     * @see [类、类#方法、类#成员]
+     */
+    @ApiOperation("根据省份ID查询城市商圈列表")
+
+    @RequestMapping(value = "queryCityByPid", method = {RequestMethod.POST})
+    public  @ResponseBody Result queryCityByPid(@ApiParam(value = "省份id") int pid) {
+        List<City> city = new ArrayList<City>();
+        Map<String,Object> map = new HashMap<String,Object>();
+        try {
+            city = cityservice.queryCityByProvince(pid);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        map.put("result",city);
+        return  Result.createSuccessResult().setData(map);
+    }
+
+
+    /**
+     * 根据城市ID查询区域商圈列表
+     * @return
+     * @see [类、类#方法、类#成员]
+     */
+    @ApiOperation("根据城市ID查询区域商圈列表")
+    @ResponseBody
+    @RequestMapping(value = "queryAreaByCid", method = {RequestMethod.GET, RequestMethod.POST})
+    public Result queryAreaByCid(@ApiParam(value = "城市id") int cid) {
+        Map<String,Object> map = new HashMap<String,Object>();
+        List<Area> areas = new ArrayList<Area>();
+        try {
+             areas =  areaservice.queryAreaByCid(cid);
+        }catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        map.put("result",areas);
+        return  Result.createSuccessResult().setData(map);
+    }
+
+}

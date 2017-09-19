@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="niuka-static" />
+        <module name="niuka_agent_api" />
+        <module name="niuka_agent_provider" />
+        <module name="niuka_api_server" />
+        <module name="niuka_common" />
+        <module name="niuka_customer_api" />
+        <module name="niuka_customer_provider" />
+        <module name="niuka_inventory_api" />
+        <module name="niuka_inventory_provider" />
+        <module name="niuka_o2o_web" />
+        <module name="niuka_product_api" />
+        <module name="niuka_product_provider" />
+        <module name="niuka_purchasing_api" />
+        <module name="niuka_purchasing_provider" />
+        <module name="niuka_sso_server" />
+        <module name="niuka_store_api" />
+        <module name="niuka_store_provider" />
+        <module name="niuka_systemset_api" />
+        <module name="niuka_systemset_provider" />
+        <module name="niuka_user_api" />
+        <module name="niuka_user_provider" />
+        <module name="purchasing_provider" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="module" target="1.8" />
+      <module name="niuka" target="1.8" />
+      <module name="niuka-static" target="1.8" />
+      <module name="niuka_agent_api" target="1.8" />
+      <module name="niuka_agent_module" target="1.8" />
+      <module name="niuka_agent_provider" target="1.8" />
+      <module name="niuka_api_server" target="1.8" />
+      <module name="niuka_common" target="1.8" />
+      <module name="niuka_customer_api" target="1.8" />
+      <module name="niuka_customer_module" target="1.8" />
+      <module name="niuka_customer_provider" target="1.8" />
+      <module name="niuka_inventory_api" target="1.8" />
+      <module name="niuka_inventory_module" target="1.8" />
+      <module name="niuka_inventory_provider" target="1.8" />
+      <module name="niuka_o2o_web" target="1.8" />
+      <module name="niuka_product_api" target="1.8" />
+      <module name="niuka_product_module" target="1.8" />
+      <module name="niuka_product_provider" target="1.8" />
+      <module name="niuka_purchasing_api" target="1.8" />
+      <module name="niuka_purchasing_module" target="1.8" />
+      <module name="niuka_purchasing_provider" target="1.8" />
+      <module name="niuka_sso_server" target="1.8" />
+      <module name="niuka_store_api" target="1.8" />
+      <module name="niuka_store_module" target="1.8" />
+      <module name="niuka_store_provider" target="1.8" />
+      <module name="niuka_systemset_api" target="1.8" />
+      <module name="niuka_systemset_module" target="1.8" />
+      <module name="niuka_systemset_provider" target="1.8" />
+      <module name="niuka_user_api" target="1.8" />
+      <module name="niuka_user_module" target="1.8" />
+      <module name="niuka_user_provider" target="1.8" />
+      <module name="purchasing_provider" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

@@ -1,0 +1,23 @@
+package com.niuka.systemset.rpc;
+
+import com.niuka.common.service.mybatis.Service;
+import com.niuka.systemset.model.Area;
+
+import java.util.List;
+
+/**
+ * 地区
+ */
+public interface  AreaService extends Service<Area, Integer> {
+
+
+    /**
+     * 查询所有的地区根据城市id
+     * @param cityId
+     * @return
+     */
+
+    public List<Area> queryAreaByCid(int cityId);
+
+	
+}

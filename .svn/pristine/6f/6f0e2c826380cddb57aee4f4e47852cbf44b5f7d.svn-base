@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.niuka.customer.dao.api.CustomerUserMapper">
+
+	<resultMap id="BaseResultMap" type="com.niuka.customer.model.CustomerUser">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="store_no" property="storeNo" jdbcType="VARCHAR"/>
+		<result column="account" property="account" jdbcType="VARCHAR"/>
+		<result column="customer_id" property="customerId" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="INTEGER"/>
+		<result column="customer_store_id" property="customerStoreId" jdbcType="INTEGER"/>
+		<result column="createtime" property="createtime" jdbcType="TIMESTAMP"/>
+		<result column="password" property="password" jdbcType="VARCHAR"/>
+		<result column="open_id" property="openId" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<sql id="Base_Column_List" >
+    	id,store_no,account,customer_id,user_id,customer_store_id,createtime,password,open_id
+    </sql>
+	
+	<!-- 保存,保存全部字段 -->
+	<insert id="insert" parameterType="com.niuka.customer.model.CustomerUser" keyProperty="id" useGeneratedKeys="true" statementType="PREPARED">
+		INSERT INTO customer_user(
+			account,
+			customer_id,
+			user_id,
+			createtime,
+			password
+		) 
+		VALUES ( 
+			#{account},
+			#{customerId},
+			#{userId},
+			#{createtime},
+			#{password}
+		)
+	</insert>
+	
+	<!-- 根据客户ID和账号修改登录密码 -->
+	<update id="updateUserPwdByAccount" parameterType="Map" statementType="PREPARED">
+		UPDATE customer_user 
+		SET
+			password = #{password}
+		WHERE 
+			account = #{username} AND customer_id = #{customerId}
+	</update>
+	
+	<!-- 根据客户ID和账号修改登录密码 -->
+	<update id="updateUserPwd" parameterType="Map" statementType="PREPARED">
+		UPDATE customer_user 
+		SET
+			password = #{password}
+		WHERE 
+			account = #{username} AND customer_id = #{customerId}
+	</update>
+	
+	<!-- 根据会员ID和客户ID查询是否存在这条记录 -->
+	<select id="findCustomerUserByUserIdAndCustomerId" resultMap="BaseResultMap" parameterType="Map">
+		select
+		  <include refid="Base_Column_List" />
+		from customer_user
+		where user_id = #{userId} AND customer_id = #{customerId}
+	</select>
+	
+	<!-- 根据open_id查询客户用户信息 -->
+	<select id="queryUserByOpenId" resultMap="BaseResultMap" parameterType="Map">
+		select
+		  <include refid="Base_Column_List" />
+		from customer_user
+		where open_id = #{openId}
+	</select>
+	
+	<!-- 根据账号和客户ID更新微信公众号唯一标识-->
+	<update id="updateOpenIdByAccountAndCustomerId" parameterType="Map" statementType="PREPARED">
+		UPDATE customer_user 
+		SET
+			open_id = #{openId}
+		WHERE 
+			account = #{userName} AND customerId = #{customerId}
+	</update>
+	
+</mapper>

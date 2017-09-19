@@ -1,0 +1,21 @@
+package com.niuka.systemset.model;
+
+import com.niuka.common.model.PersistentObject;
+
+/**
+  (省份)
+*/
+public class Province extends PersistentObject {
+
+	// 省份名称
+	private String provinceName;
+
+	public void setProvinceName(String provinceName){
+		this.provinceName = provinceName;
+	}
+
+	public String getProvinceName(){
+		return this.provinceName;
+	}
+
+}

@@ -1,0 +1,21 @@
+package com.niuka.systemset.rpc;
+
+import com.niuka.common.service.mybatis.Service;
+import com.niuka.systemset.model.City;
+import com.niuka.systemset.model.Province;
+
+import java.util.List;
+
+/**
+ * 城市接口
+ */
+public interface  CityService extends Service<City, Integer> {
+
+
+    /**
+     * 根据省份id查询所有的城市
+     * @return
+     */
+    public List<City> queryCityByProvince(int provinceId);
+	
+}

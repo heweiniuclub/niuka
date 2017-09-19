@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="niuka_o2o_web:war">
+    <output-path>$PROJECT_DIR$/niuka_o2o_web/target</output-path>
+    <root id="archive" name="/niuka_o2o_web.war">
+      <element id="artifact" artifact-name="niuka_o2o_web:war exploded" />
+    </root>
+  </artifact>
+</component>

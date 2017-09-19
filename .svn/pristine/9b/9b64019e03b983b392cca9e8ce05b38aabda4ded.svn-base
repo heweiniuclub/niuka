@@ -1,0 +1,32 @@
+package com.niuka.systemset.model;
+
+import com.niuka.common.model.PersistentObject;
+
+/**
+  (区域)
+*/
+public class Area extends PersistentObject {
+
+	// 区域名称
+	private String areaName;
+	// 城市id
+	private Integer cityId;
+
+
+	public void setAreaName(String areaName){
+		this.areaName = areaName;
+	}
+
+	public String getAreaName(){
+		return this.areaName;
+	}
+
+	public void setCityId(Integer cityId){
+		this.cityId = cityId;
+	}
+
+	public Integer getCityId(){
+		return this.cityId;
+	}
+
+}

@@ -1,0 +1,147 @@
+package com.niuka.store.model;
+
+import com.alibaba.fastjson.annotation.JSONField;
+import com.niuka.common.model.PersistentObject;
+
+import java.util.Date;
+
+/**
+  客户门店
+*/
+public class CustomerStore extends PersistentObject {
+
+	// 创建时间
+	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+	private Date createtime;
+	// 最后一次更新时间
+	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+	private Date modifiedTime;
+	// 门店编号
+	private String storeNo;
+	// 门店名称
+	private String storeName;
+	// 门店地址
+	private String storeAddress;
+	// 门店电话
+	private String storePhone;
+	// 省份
+	private Integer provId;
+	// 城市
+	private Integer cityId;
+	// 区域
+	private Integer areaId;
+	// 客户ID
+	private Integer customerId;
+	// 客户类型
+	private Byte customerType;
+	// 营业时间
+	private String businessHours;
+	// 是否有效(0有效 1无效)
+	private Byte isvalid;
+
+
+	public void setCreatetime(Date createtime){
+		this.createtime = createtime;
+	}
+
+	public Date getCreatetime(){
+		return this.createtime;
+	}
+
+	public void setModifiedTime(Date modifiedTime){
+		this.modifiedTime = modifiedTime;
+	}
+
+	public Date getModifiedTime(){
+		return this.modifiedTime;
+	}
+
+	public void setStoreNo(String storeNo){
+		this.storeNo = storeNo;
+	}
+
+	public String getStoreNo(){
+		return this.storeNo;
+	}
+
+	public void setStoreName(String storeName){
+		this.storeName = storeName;
+	}
+
+	public String getStoreName(){
+		return this.storeName;
+	}
+
+	public void setStoreAddress(String storeAddress){
+		this.storeAddress = storeAddress;
+	}
+
+	public String getStoreAddress(){
+		return this.storeAddress;
+	}
+
+	public void setStorePhone(String storePhone){
+		this.storePhone = storePhone;
+	}
+
+	public String getStorePhone(){
+		return this.storePhone;
+	}
+
+	public void setProvId(Integer provId){
+		this.provId = provId;
+	}
+
+	public Integer getProvId(){
+		return this.provId;
+	}
+
+	public void setCityId(Integer cityId){
+		this.cityId = cityId;
+	}
+
+	public Integer getCityId(){
+		return this.cityId;
+	}
+
+	public void setAreaId(Integer areaId){
+		this.areaId = areaId;
+	}
+
+	public Integer getAreaId(){
+		return this.areaId;
+	}
+
+	public void setCustomerId(Integer customerId){
+		this.customerId = customerId;
+	}
+
+	public Integer getCustomerId(){
+		return this.customerId;
+	}
+
+	public void setCustomerType(Byte customerType){
+		this.customerType = customerType;
+	}
+
+	public Byte getCustomerType(){
+		return this.customerType;
+	}
+
+	public void setBusinessHours(String businessHours){
+		this.businessHours = businessHours;
+	}
+
+	public String getBusinessHours(){
+		return this.businessHours;
+	}
+
+	public void setIsvalid(Byte isvalid){
+		this.isvalid = isvalid;
+	}
+
+	public Byte getIsvalid(){
+		return this.isvalid;
+	}
+
+}

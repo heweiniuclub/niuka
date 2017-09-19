@@ -1,0 +1,32 @@
+package com.niuka.agent.rpc;
+
+import com.niuka.agent.model.AgentLevel;
+import com.niuka.common.model.Pagination;
+import com.niuka.common.service.mybatis.Service;
+
+import java.util.List;
+
+
+/**
+ * 代理商级别服务接口
+ * 
+ * @author hewei
+ */
+public interface AgentLevelService extends Service<AgentLevel, Integer> {
+	
+
+	
+	/**
+	 * 根据代理商级别名称查询
+	 * @param agent_level_name 代理商级别名称
+	 * @return
+	 */
+	public Pagination<AgentLevel> findPaginationByName(String agent_level_name, Pagination<AgentLevel> p);
+
+	/**
+	 * 查询所有的代理商级别
+	 *
+	 * @return
+	 */
+	public List<AgentLevel> queryAllAgentLevel();
+}

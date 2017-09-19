@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.niuka.common.dao.BaseMapper">
+    <insert id="add" parameterType="java.util.Map" statementType="STATEMENT" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO ${tablename}
+        <foreach collection="keys" item="k" index="index" open="(" separator="," close=")">
+            ${k}
+        </foreach>
+        VALUES
+        <foreach collection="keys" item="k" index="index" open="(" separator="," close=")">
+            '${params[k]}'
+        </foreach>
+    </insert>
+
+    <delete id="deleteBatch" parameterType="java.util.Map" statementType="STATEMENT">
+        DELETE FROM ${tablename}
+        WHERE id IN
+        <foreach collection="ids" item="id" index="index" open="(" separator="," close=")">
+            ${id}
+        </foreach>
+    </delete>
+
+    <delete id="delete" parameterType="java.lang.Integer" statementType="STATEMENT">
+        DELETE FROM ${tablename}
+        WHERE id = ${id}
+    </delete>
+
+
+    <!--根据id修改-->
+    <update id="updateSelectById" parameterType="java.util.Map" statementType="STATEMENT">
+        UPDATE ${tablename} SET
+        <foreach collection="keys" item="k" index="index" separator=",">
+            ${k}= '${params[k]}'
+        </foreach>
+        WHERE id= ${id}
+    </update>
+
+    <!--根据条件修改 必须要有条件-->
+    <update id="updateSelectByParam" parameterType="java.util.Map" statementType="STATEMENT">
+        UPDATE ${tablename} SET
+        <foreach collection="keys" item="k" index="index" separator=",">
+            ${k}= '${params[k]}'
+        </foreach>
+        WHERE
+        <foreach collection="ckeys" item="c" separator="AND">
+            ${c}= '${conditions[c]}'
+        </foreach>
+    </update>
+
+    <!-- 根据条件查询-->
+    <select id="selectByParam" parameterType="java.util.Map" statementType="STATEMENT"
+            resultType="map">
+        SELECT
+        <foreach collection="fields" item="f" index="index" separator=",">
+            ${f}
+        </foreach>
+        FROM ${tablename}
+        WHERE 1 = 1
+        <foreach collection="keys" item="k" index="index">
+            AND ${k}= '${params[k]}'
+        </foreach>
+        <if test="betweenClause != null and betweenClause != ''">
+            ${betweenClause}
+        </if>
+        <if test="inCondition != null and inCondition != ''">
+            ${inCondition}
+        </if>
+        <if test="likeCondition != null and likeCondition != ''">
+            ${likeCondition}
+        </if>
+        <if test="orderByClause != null and orderByClause != ''">
+            ORDER BY ${orderByClause}
+        </if>
+        <if test="limitClause != null and limitClause != ''">
+            ${limitClause}
+        </if>
+    </select>
+
+    <!--查询记录数量-->
+    <select id="selectCount" parameterType="java.util.Map" statementType="STATEMENT"
+            resultType="int">
+        SELECT
+          COUNT(1)
+        FROM ${tablename}
+        WHERE 1 = 1
+        <foreach collection="keys" item="k" index="index">
+            AND ${k}= '${params[k]}'
+        </foreach>
+        <if test="betweenClause != null and betweenClause != ''">
+            ${betweenClause}
+        </if>
+         <if test="inCondition != null and inCondition != ''">
+            ${inCondition}
+        </if>
+        <if test="likeCondition != null and likeCondition != ''">
+            ${likeCondition}
+        </if>
+    </select>
+
+    <!--查询唯一值-->
+    <select id="selectUnique" parameterType="java.util.Map" statementType="STATEMENT"
+            resultType="map">
+        SELECT
+        <foreach collection="fields" item="f" index="index" separator=",">
+            ${f}
+        </foreach>
+        FROM ${tablename}
+        WHERE 1 = 1
+        <foreach collection="keys" item="k" index="index">
+            AND ${k}= '${params[k]}'
+        </foreach>
+    </select>
+
+
+    <!--********传入纯sql语句主要用于多表链接查询******************-->
+    <!--查询-->
+    <select id="selectSql" parameterType="map" statementType="STATEMENT"
+            resultType="map">
+       ${sql}
+    </select>
+
+
+</mapper>

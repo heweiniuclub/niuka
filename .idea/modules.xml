@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/module/module.iml" filepath="$PROJECT_DIR$/module/module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/module.iml" filepath="$PROJECT_DIR$/module/module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/niuka.iml" filepath="$PROJECT_DIR$/niuka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/niuka.iml" filepath="$PROJECT_DIR$/niuka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/niuka-static/niuka-static.iml" filepath="$PROJECT_DIR$/niuka-static/niuka-static.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_agent_module/niuka_agent_api/niuka_agent_api.iml" filepath="$PROJECT_DIR$/module/niuka_agent_module/niuka_agent_api/niuka_agent_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_agent_module/niuka_agent_module.iml" filepath="$PROJECT_DIR$/module/niuka_agent_module/niuka_agent_module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_agent_module/niuka_agent_provider/niuka_agent_provider.iml" filepath="$PROJECT_DIR$/module/niuka_agent_module/niuka_agent_provider/niuka_agent_provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/niuka_api_server/niuka_api_server.iml" filepath="$PROJECT_DIR$/niuka_api_server/niuka_api_server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/niuka_common/niuka_common.iml" filepath="$PROJECT_DIR$/niuka_common/niuka_common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_customer_module/niuka_customer_api/niuka_customer_api.iml" filepath="$PROJECT_DIR$/module/niuka_customer_module/niuka_customer_api/niuka_customer_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_customer_module/niuka_customer_module.iml" filepath="$PROJECT_DIR$/module/niuka_customer_module/niuka_customer_module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_customer_module/niuka_customer_provider/niuka_customer_provider.iml" filepath="$PROJECT_DIR$/module/niuka_customer_module/niuka_customer_provider/niuka_customer_provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_inventory_module/niuka_inventory_api/niuka_inventory_api.iml" filepath="$PROJECT_DIR$/module/niuka_inventory_module/niuka_inventory_api/niuka_inventory_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_inventory_module/niuka_inventory_module.iml" filepath="$PROJECT_DIR$/module/niuka_inventory_module/niuka_inventory_module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_inventory_module/niuka_inventory_provider/niuka_inventory_provider.iml" filepath="$PROJECT_DIR$/module/niuka_inventory_module/niuka_inventory_provider/niuka_inventory_provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/niuka_o2o_web/niuka_o2o_web.iml" filepath="$PROJECT_DIR$/niuka_o2o_web/niuka_o2o_web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_product_module/niuka_product_api/niuka_product_api.iml" filepath="$PROJECT_DIR$/module/niuka_product_module/niuka_product_api/niuka_product_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_product_module/niuka_product_module.iml" filepath="$PROJECT_DIR$/module/niuka_product_module/niuka_product_module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_product_module/niuka_product_provider/niuka_product_provider.iml" filepath="$PROJECT_DIR$/module/niuka_product_module/niuka_product_provider/niuka_product_provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_purchasing_module/niuka_purchasing_api/niuka_purchasing_api.iml" filepath="$PROJECT_DIR$/module/niuka_purchasing_module/niuka_purchasing_api/niuka_purchasing_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_purchasing_module/niuka_purchasing_module.iml" filepath="$PROJECT_DIR$/module/niuka_purchasing_module/niuka_purchasing_module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_purchasing_module/niuka_purchasing_provider/niuka_purchasing_provider.iml" filepath="$PROJECT_DIR$/module/niuka_purchasing_module/niuka_purchasing_provider/niuka_purchasing_provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/niuka_sso_server/niuka_sso_server.iml" filepath="$PROJECT_DIR$/niuka_sso_server/niuka_sso_server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_store_module/niuka_store_api/niuka_store_api.iml" filepath="$PROJECT_DIR$/module/niuka_store_module/niuka_store_api/niuka_store_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_store_module/niuka_store_module.iml" filepath="$PROJECT_DIR$/module/niuka_store_module/niuka_store_module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_store_module/niuka_store_provider/niuka_store_provider.iml" filepath="$PROJECT_DIR$/module/niuka_store_module/niuka_store_provider/niuka_store_provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_systemset_module/niuka_systemset_api/niuka_systemset_api.iml" filepath="$PROJECT_DIR$/module/niuka_systemset_module/niuka_systemset_api/niuka_systemset_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_systemset_module/niuka_systemset_module.iml" filepath="$PROJECT_DIR$/module/niuka_systemset_module/niuka_systemset_module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_systemset_module/niuka_systemset_provider/niuka_systemset_provider.iml" filepath="$PROJECT_DIR$/module/niuka_systemset_module/niuka_systemset_provider/niuka_systemset_provider.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_user_module/niuka_user_api/niuka_user_api.iml" filepath="$PROJECT_DIR$/module/niuka_user_module/niuka_user_api/niuka_user_api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_user_module/niuka_user_module.iml" filepath="$PROJECT_DIR$/module/niuka_user_module/niuka_user_module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/module/niuka_user_module/niuka_user_provider/niuka_user_provider.iml" filepath="$PROJECT_DIR$/module/niuka_user_module/niuka_user_provider/niuka_user_provider.iml" />
+    </modules>
+  </component>
+</project>

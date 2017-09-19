@@ -1,0 +1,956 @@
+package com.niuka.user.service.api;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import com.niuka.common.constant.Constant;
+import com.niuka.common.constant.ConstantMessage;
+import com.niuka.common.exception.DaoException;
+import com.niuka.common.model.ExtendMap;
+import com.niuka.common.provider.PasswordProvider;
+import com.niuka.common.service.mybatis.impl.ServiceImpl;
+import com.niuka.common.util.ClassUtil;
+import com.niuka.common.util.Common;
+import com.niuka.common.util.HttpSender;
+import com.niuka.common.util.OutputUtil;
+import com.niuka.common.util.ValidateUtils;
+import com.niuka.customer.model.Customer;
+import com.niuka.customer.model.CustomerUser;
+import com.niuka.customer.rpc.api.CustomerApiService;
+import com.niuka.customer.rpc.api.CustomerUserApiService;
+import com.niuka.customer.rpc.api.CustomerUserJtaApiService;
+import com.niuka.user.dao.api.UserMapper;
+import com.niuka.user.model.OauthLogin;
+import com.niuka.user.model.PersonalMember;
+import com.niuka.user.model.User;
+import com.niuka.user.rpc.api.OauthLoginApiService;
+import com.niuka.user.rpc.api.PersonalMemberApiService;
+import com.niuka.user.rpc.api.UserApiService;
+
+/**
+ * Created by admin on 2017/9/10.
+ */
+@Service("userapiservice")
+public class UserApiServiceImpl extends ServiceImpl<UserMapper, User, Integer>  implements UserApiService   {
+
+	@Resource
+	protected HttpServletRequest request;
+
+	@Resource
+	protected HttpServletResponse response;
+	
+	@Resource
+	private PersonalMemberApiService memberapiservice;
+	@Resource
+	private OauthLoginApiService oauthLoginapiservice;
+	@Resource
+	private CustomerApiService customerapiservice;
+	@Resource
+	private CustomerUserApiService customerUserapiservice;
+	
+	@Resource
+	private CustomerUserJtaApiService customerUserJtaApiService;
+	
+	@Autowired
+	public void setDao(UserMapper dao) {
+		this.dao = dao;
+	}
+	
+	@Override
+	public Map<String, Object> login(Map<String, Object> params, HttpServletRequest request) {
+		Map<String, Object> result = new HashMap<String, Object>();
+        try {
+        	// 检查参数
+            if (CollectionUtils.isEmpty(params)) {
+                //参数为空
+                OutputUtil.outParamEmptyError(result);
+                return result;
+            }
+        	
+            //接受参数
+            Integer customerId = ClassUtil.getInteger(params, "customerId");
+            Integer loginType = ClassUtil.getInteger(params, "loginType");
+            Integer oauthLoginType = ClassUtil.getInteger(params, "oauthLoginType");
+            String username = ClassUtil.getString(params, "username");
+            String password = ClassUtil.getString(params, "password");
+            String oauthId = ClassUtil.getString(params, "oauthId");
+            String oauthName = ClassUtil.getString(params, "oauthName");
+            String identifyingCode = ClassUtil.getString(params, "identifyingCode");
+            
+            //校验参数
+            if (loginType != 0 && loginType != 1 && loginType != 2) {
+            	OutputUtil.outError(result, "登录类型参数错误");
+            	return result;
+            }
+            if (loginType == 1) {
+            	if (StringUtils.isBlank(password)) {
+            		OutputUtil.outError(result, "密码错误");
+                	return result;
+                }
+            }
+            if (loginType == 1 || loginType == 2) {
+            	//检查手机号码格式是否正确
+            	if (StringUtils.isBlank(username) || !ValidateUtils.isMobile(username)) {
+                	OutputUtil.outError(result, "账号不能为空或者格式错误");
+                	return result;
+                }
+            	
+            }
+            
+            if(loginType == 0){
+            	oauthLogin(customerId, oauthName, oauthId, oauthLoginType, result);
+            	return result;
+            }else if(loginType == 1){//用户名密码登录
+            	password = PasswordProvider.encrypt(password);
+            	if (!checkPhoneAndPasswordExist(username, password, customerId, result)) {
+            		return result;
+            	}
+            }else if(loginType == 2){//快捷登录
+            	// 检查是否已经注册
+                if (!isRegister(username, customerId, result)) {
+                    return result;
+                }
+//            	if (!checkPhoneAndMsgCode(username, identifyingCode, result, request)) {
+//                    return result;
+//                }
+            }
+            
+            User user = dao.findUserByAccount(username);
+            if (user == null) {
+            	OutputUtil.outError(result, "账号不存在");
+            	return result;
+            }
+            Integer userId = user.getId();
+            
+            PersonalMember member = memberapiservice.findMemberByUserIdAndCustomerId(userId, customerId);
+            if (member == null) {
+            	OutputUtil.outError(result, "登录失败，会员信息查询失败！");
+            	return result;
+            }
+            
+        	// 输出参数
+        	result.put("userId", userId);
+        	result.put("nickName", member.getNickName());
+        	result.put("phone", username);
+        	result.put("personalId", member.getId());// personalId
+        	result.put("headImg", member.getHeadImg());
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	OutputUtil.outError(result, "登录失败！系统繁忙...");
+        }
+        return result;
+	}
+	
+	/**
+	 * 根据账号密码和客户ID查询是否已经注册
+	 * @param username
+	 * @param password
+	 * @param customerId
+	 * @param result
+	 * @return
+	 */
+	private boolean checkPhoneAndPasswordExist(String username,String password, Integer customerId, Map<String, Object> result) {
+		int count = dao.checkPhoneAndPasswordExist(username, password, customerId);
+		if (count <= 0) {
+			OutputUtil.outError(result, "用户未注册");
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 登录
+	 * @param customerId
+	 * @param username
+	 * @param password
+	 * @param loginType
+	 * @param oauthLoginType
+	 * @param identifyingCode
+	 * @param oauthName
+	 * @param oauthId
+	 * @param request
+	 * @return
+	 */
+	@Override
+    public Map<String, Object> login(Integer customerId, String username, String password, Integer loginType, Integer oauthLoginType, String identifyingCode, String oauthName, String oauthId, HttpServletRequest request) {
+    	Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            //校验参数
+            if (loginType != 0 && loginType != 1 && loginType != 2) {
+            	OutputUtil.outError(result, "登录类型参数错误");
+            	return result;
+            }
+            if (loginType == 1) {
+            	if (StringUtils.isBlank(password)) {
+            		OutputUtil.outError(result, "密码错误");
+                	return result;
+                }
+            }
+            if (loginType == 1 || loginType == 2) {
+            	if (loginType == 1 || loginType == 2) {
+                	//检查手机号码格式是否正确
+                	if (StringUtils.isBlank(username) || !ValidateUtils.isMobile(username)) {
+                    	OutputUtil.outError(result, "用户名错误");
+                    	return result;
+                    }
+                	
+                }
+            }
+            
+            if(loginType == 0){
+            	oauthLogin(customerId, oauthName, oauthId, oauthLoginType, result);
+            	return result;
+            }else if(loginType == 1){//用户名密码登录
+            	password = PasswordProvider.encrypt(password);
+            }else if(loginType == 2){//快捷登录
+            	// 检查是否已经注册
+                if (!isRegister(username, customerId, result)) {
+                    return result;
+                }
+            	if (!checkPhoneAndMsgCode(username, identifyingCode, result, request)) {
+                    return result;
+                }
+            }
+            
+            User user = dao.findUserByAccount(username);
+            if (user == null) {
+            	OutputUtil.outError(result, "账号不存在");
+            	return result;
+            }
+            Integer userId = user.getId();
+            
+            PersonalMember member = memberapiservice.findMemberByUserIdAndCustomerId(userId, customerId);
+            if (member == null) {
+            	OutputUtil.outError(result, "登录失败，会员信息查询失败！");
+            	return result;
+            }
+            
+        	// 输出参数
+        	result.put("userId", userId);
+        	result.put("nickName", member.getNickName());
+        	result.put("phone", username);
+        	result.put("personalId", member.getId());// personalId
+        	result.put("headImg", member.getHeadImg());
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	OutputUtil.outError(result, "登录失败！系统繁忙...");
+        }
+        return result;
+    }
+
+	/**
+	 * 检查用户是否已经注册
+	 * @param username
+	 * @param customerId
+	 * @param result
+	 * @return
+	 */
+	private boolean isRegister(String username, Integer customerId, Map<String, Object> result) {
+		int count = dao.checkIsRegister(username, customerId);
+		if (count > 0) {
+			OutputUtil.outError(result, "用户已注册");
+			return true;
+		}
+		OutputUtil.outError(result, "用户未注册");
+		return false;
+	}
+
+	/**
+     * 检查验证码和手机号码
+     *
+     * @param username        用户名 手机号码
+     * @param identifyingCode 验证码
+     * @return
+     */
+    private boolean checkPhoneAndMsgCode(String username, String identifyingCode, Map<String, Object> result, HttpServletRequest request) {
+        try {
+            // 获取验证码
+            //setAttribute(username, request, "123456");// 测试验证码
+            Object msgCode = getAttribute(username, request);
+            // 验证码已失效
+            if (ClassUtil.isEmpty(msgCode)) {
+            	OutputUtil.outError(result, ConstantMessage.USER_REGISTER_IDENTIFYINGCODE_FAILURE);
+                return false;
+            }
+            String oldCode = msgCode.toString();
+            if (!identifyingCode.equals(oldCode)) {
+            	OutputUtil.outError(result, "验证码不正确！");
+                return false;
+            }
+            if (identifyingCode.equals(oldCode)) {
+                // 验证码正确
+                // 清空存的验证码
+                request.getSession().removeAttribute(username);
+            }
+        } catch (Exception e) {
+        	OutputUtil.outError(result, "登录失败");
+            return false;
+        }
+        return true;
+    }
+
+	/**
+     * 第三方登录
+     *
+     * @param result
+     * @return
+     */
+    private boolean oauthLogin(Integer customerId, String oauthName, String oauthId, Integer oauthLoginType, Map<String, Object> result) {
+        /*
+         * 快捷登录，只需要验证快捷登录的这个用户是否在sys_oauth_login表里是否有user_id,
+         * 有则登录成功；没有则向前端返回登录失败的标识，前端在跳转到绑定手机的页面
+         */
+        //获取第三方登录数据
+        // 检查
+        if (StringUtils.isBlank(oauthId) || StringUtils.isBlank(oauthName)) {
+            OutputUtil.outError(result, "第三方登录参数不全！");
+            return false;
+        }
+        
+        OauthLogin oauthLogin = oauthLoginapiservice.findOauthLoginByCustomerId(customerId, oauthName, oauthId);
+        if (oauthLogin == null) {
+        	OutputUtil.outError(result, "需要绑定手机号！");
+        	return false;
+        } else {
+        	//获取用户id并且查询会员资料
+        	Integer userId = oauthLogin.getUserId();
+            return outMermberInfo(result,customerId, userId);
+        }
+    }
+
+    /**
+     * 根据userId和customerId查询会员资料
+     * @param result
+     * @param userId
+     * @return
+     */
+	private boolean outMermberInfo(Map<String, Object> result, Integer customerId, Integer userId) {
+		PersonalMember member = memberapiservice.findMemberByUserIdAndCustomerId(userId, customerId);
+    	result.put("userId", userId);
+    	result.put("nickName", member.getNickName());
+    	result.put("phone", member.getPhone());
+    	result.put("personalId", member.getId());// personalId
+    	result.put("headImg", member.getHeadImg());
+		return true;
+	}
+
+	@Override
+	@Transactional(rollbackFor=DaoException.class)
+	public Map<String, Object> register(Map<String, Object> params, Map<String, Object> result) throws DaoException {
+        try {
+        	//检查参数
+            if (CollectionUtils.isEmpty(params)) {
+                //参数为空
+                OutputUtil.outParamEmptyError(result);
+                return result;
+            }
+        	
+            //接受参数
+            Integer customerId = ClassUtil.getInteger(params, "customerId");
+            String userName = ClassUtil.getString(params, "username");
+            String password = ClassUtil.getString(params, "password");
+            
+            // 检查是否已经注册
+            if (isRegister(userName, customerId, result)) {
+                return result;
+            }
+            
+            // 检查手机号码和验证码
+//            String identifyingCode = params.get("identifyingCode");//验证码
+//            if (!checkPhoneAndMsgCode(userName, identifyingCode, result, request)) {
+//                return result;
+//            }
+            
+            User user = new User();
+            user.setAccount(userName);
+            user.setCreateTime(getNowDateTime());
+            user.setIsEnable(true);
+            user.setUserType(0);
+            dao.insert(user);
+            Integer userId = user.getId();
+            
+            //添加会员信息
+            PersonalMember member = new PersonalMember();
+            member.setUserId(userId);
+            member.setCustomerId(customerId);
+            member.setHeadImg(Constant.HEAD_IMG_URL);
+            member.setCreatetime(getNowDateTime());
+            member.setIsvalid(0);
+            member.setSex(2);
+            member.setNickName(userName);
+            member.setPhone(userName);
+            Integer personalId = memberapiservice.add(member);
+            
+            //添加客户用户关联信息
+            CustomerUser customerUser = new CustomerUser();
+            customerUser.setAccount(userName);
+            customerUser.setCreatetime(getNowDateTime());
+            customerUser.setCustomerId(customerId);
+            customerUser.setCustomerStoreId(0);
+            customerUser.setPassword(PasswordProvider.encrypt(password));
+            customerUser.setUserId(userId);
+            customerUserJtaApiService.addCustomerUser(customerUser);
+            
+
+            //输出参数
+            Map<String, Object> outPutParams = new HashMap<String, Object>();
+            outPutParams.put("userId", userId);
+            outPutParams.put("nickName", userName);
+            outPutParams.put("phone", userName);
+            outPutParams.put("personalId", personalId);// personalId
+            outPutParams.put("headImg", Constant.HEAD_IMG_URL);
+            outPutParams.put("userType", 0);
+            
+            outSuccess(result, outPutParams);
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	OutputUtil.outError(result, "注册失败！系统繁忙...");
+        }
+        return result;
+	}
+
+	@Override
+	public Map<String, Object> sendMsg(ExtendMap<String, Object> params, HttpServletRequest request) {
+		Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            // 检查参数
+            if (CollectionUtils.isEmpty(params)) {
+                //参数为空
+                outParamEmptyError(result);
+                return result;
+            }
+            //接收参数
+            String phone = params.getString("phone");
+            Integer typeInt = params.getInteger("type");
+            Integer customerId = params.getInteger("customerId");
+            
+            //校验参数
+            if (typeInt != 1 && typeInt != 2 && typeInt != 3 && typeInt != 4 && typeInt !=5) {
+            	outError(result, "参数类型错误");
+            	return result;
+            }
+            //检查手机号码格式是否正确
+        	if (StringUtils.isBlank(phone) || !ValidateUtils.isMobile(phone)) {
+            	OutputUtil.outError(result, "手机号码不能为空或者格式错误");
+            	return result;
+            }
+
+            String score = String.valueOf(Common.getRandomNum());
+            String returnString = "";
+            
+            //检查用户是否注册
+            boolean validUser = isRegister(phone, customerId, result);
+            if (typeInt == 1) {
+            	if (validUser) {
+                	return result;
+                }
+            } else {
+            	if (!validUser) {
+                    //不是一个有效的用户
+                    outError(result, "用户不存在或被禁止！");
+                    return result;
+                }    
+            }
+            
+            if (1 == typeInt) {// 注册验证
+                String msg = score + "为您的注册验证码，请在30分钟内完成，如非本人操作，请忽略。";
+                returnString = HttpSender.batchSend(phone, msg);
+            }else if (2 == typeInt) {// 快捷登录
+                String msg = score + "为您的快捷登录验证码，请在30分钟内完成，如非本人操作，请忽略。";
+                returnString = HttpSender.batchSend(phone, msg);
+            }else if (3 == typeInt) {// 忘记密码验证码
+                String msg = score + "为您的忘记密码验证码，请在30分钟内完成，如非本人操作，请忽略。";
+                returnString = HttpSender.batchSend(phone, msg);
+            } else if (4 == typeInt) {// 修改绑定手机
+                String msg = score + "为您的修改绑定手机验证码，请在30分钟内完成，如非本人操作，请忽略。";
+                returnString = HttpSender.batchSend(phone, msg);
+            } else if (5 == typeInt) {// 修改支付密码
+                String msg = score + "为您的修改支付密码验证码，请在30分钟内完成，如非本人操作，请忽略。";
+                returnString = HttpSender.batchSend(phone, msg);
+            } else if (6 == typeInt) {// 修改登录密码
+                String msg = score + "为您的修改登录密码验证码，请在30分钟内完成，如非本人操作，请忽略。";
+                returnString = HttpSender.batchSend(phone, msg);
+            } else if (7 == typeInt) {//微信端绑定手机号码
+            	String msg = score + "为您的绑定手机验证码，请您在30分钟内完成。如非本人操作，请忽略。";
+            	returnString = HttpSender.batchSend(phone, msg);
+            }
+
+            // 处理结果 若returnString包含",0",那么表示短信发送成功了；若包含",108",表示短信发送失败
+            if (returnString.contains(",0")) {
+                setAttribute(phone, request, score);// 将验证码保存在session中
+                // 发送成功
+                outSuccess(result);
+                return result;
+            } else {
+                // 发送失败
+                outError(result, "短信发送失败,请稍后！");
+                return result;
+            }
+        } catch (Exception e) {
+        	e.printStackTrace();
+            outError(result, "正在维护中,请稍后操作-----");
+        }
+        return result;
+	}
+
+	@Override
+	@Transactional(rollbackFor = DaoException.class)
+	public Map<String, Object> forgetPassword(ExtendMap<String, Object> params) throws DaoException {
+		Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            // 检查参数
+            if (CollectionUtils.isEmpty(params)) {
+                //参数为空
+                outParamEmptyError(result);
+                return result;
+            }
+            
+            //接收参数
+            Integer customerId = params.getInteger("customerId");
+            String password = params.getString("password");
+            String rePassword = params.getString("rePassword");
+            String username = params.getString("username");
+            // 检查手机号码和验证码
+            String identifyingCode = params.getString("identifyingCode");
+           
+            //校验参数
+            if (StringUtils.isBlank(username) || StringUtils.isBlank(password)|| StringUtils.isBlank(rePassword)|| StringUtils.isBlank(identifyingCode)) {
+                //参数为空
+                outParamEmptyError(result);
+                return result;
+            }
+            //检查手机号码格式是否正确
+        	if (StringUtils.isBlank(username) || !ValidateUtils.isMobile(username)) {
+            	OutputUtil.outError(result, "手机号码不能为空或者格式错误");
+            	return result;
+            }
+            if(!password.equals(rePassword)){
+            	outError(result, "两次输入的密码不一致!");
+            	return result;
+            } 
+//            if (!checkPhoneAndMsgCode(username, identifyingCode, result, request)) {
+//                return result;
+//            }
+            //检查用户是否注册
+            boolean validUser = isRegister(username, customerId, result);
+            if (!validUser) {
+                //不是一个有效的用户
+                outError(result, "用户不存在或被禁止！");
+                return result;
+            }  
+            
+            //修改用户登录密码
+            customerUserJtaApiService.updateUserPwdByAccount(username, customerId, PasswordProvider.encrypt(password));
+            outSuccess(result, "修改成功");
+        } catch (Exception e) {
+        	e.printStackTrace();
+            outError(result, "修改失败！系统繁忙...");
+        }
+        return result;
+	}
+
+	@Override
+	@Transactional(rollbackFor = DaoException.class)
+	public Map<String, Object> updatePassword(ExtendMap<String, Object> params) throws DaoException  {
+		Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            // 检查参数
+            if (CollectionUtils.isEmpty(params)) {
+                //参数为空
+                outParamEmptyError(result);
+                return result;
+            }
+            //接收参数
+            Integer customerId = params.getInteger("customerId");
+            String oldPassword = params.getString("oldPassword");
+            String password = params.getString("password");
+            String rePassword = params.getString("rePassword");
+            String userId = params.getString("userId");
+
+            //校验参数
+            if (StringUtils.isBlank(password) || StringUtils.isBlank(rePassword) || StringUtils.isBlank(userId) || StringUtils.isBlank(oldPassword)) {
+                outParamEmptyError(result);
+                return result;
+            }            
+            if(!password.equals(rePassword)){
+            	outError(result, "两次输入的密码不一致!");
+            	return result;
+            }
+            
+            //根据用户ID和客户ID查询客户用户记录
+            CustomerUser customerUser = customerUserapiservice.findCustomerUserByUserIdAndCustomerId(userId, customerId);
+            if (customerUser == null) {
+    			outError(result, "用户不存在");
+    			return result;
+    		} else {
+    			if (!PasswordProvider.encrypt(oldPassword).equals(customerUser.getPassword())) {
+    				outError(result, "旧密码错误");
+    				return result;
+    			}
+    			//修改用户登录密码
+    			customerUserJtaApiService.updateUserPwd(customerUser.getAccount(), customerId, PasswordProvider.encrypt(rePassword));
+                outSuccess(result, "修改密码成功！");
+    		}
+        } catch (Exception e) {
+        	e.printStackTrace();
+            outError(result, "修改密码失败！系统繁忙...");
+        }
+        return result;
+	}
+
+	@Override
+	public Map<String, Object> checkMsgCode(ExtendMap<String, Object> params, HttpServletRequest request) {
+		Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            // 检查参数
+            if (CollectionUtils.isEmpty(params)) {
+                //参数为空
+                outParamEmptyError(result);
+                return result;
+            }
+            //接收参数
+            String phone = params.getString("phone");
+            String identifyingCode = params.getString("identifyingCode");
+            // 校验
+            if (StringUtils.isBlank(phone)||StringUtils.isBlank(identifyingCode)) {
+                outParamEmptyError(result);
+                return result;
+            }
+           // setAttribute(phone, request, "123456");// 测试验证码
+            Object msgCode = getAttribute(phone, request);
+            // 验证码已失效
+            if (ClassUtil.isEmpty(msgCode)) {
+                outError(result, ConstantMessage.USER_REGISTER_IDENTIFYINGCODE_FAILURE);
+                return result;
+            }
+            String oldCode = msgCode.toString();
+            if (!identifyingCode.equals(oldCode)) {
+                outError(result, "验证码不正确！");
+                return result;
+            }	           
+            //request.getSession().removeAttribute(phone);	            
+            outSuccess(result, "校验短信验证码成功！");
+        } catch (Exception e) {
+        	e.printStackTrace();
+            outError(result, "校验短信验证码失败！系统繁忙...");
+        }
+        return result;
+	}
+
+	@Override
+	@Transactional(rollbackFor = DaoException.class)
+	public Map<String, Object> updateBindPhone(ExtendMap<String, Object> params) throws DaoException {
+		Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            // 检查参数
+            if (CollectionUtils.isEmpty(params)) {
+                //参数为空
+                outParamEmptyError(result);
+                return result;
+            }
+            String personalId = params.getString("personalId");
+            String newPhone = params.getString("newPhone");
+            // 检查手机号码和验证码
+            String identifyingCode = params.getString("identifyingCode");
+           
+            if (StringUtils.isBlank(personalId) || StringUtils.isBlank(newPhone) || StringUtils.isBlank(identifyingCode)) {
+                //参数为空
+                outParamEmptyError(result);
+                return result;
+            }
+//            if (!checkPhoneAndMsgCode(newPhone, identifyingCode, result, request)) {
+//                return result;
+//            }
+
+            //修改绑定的手机号码
+            memberapiservice.updateBindPhone(personalId,newPhone);
+            outSuccess(result, "修改成功！");             
+        } catch (Exception e) {
+        	e.printStackTrace();
+            outError(result, "修改绑定手机失败");
+        }
+        return result;
+	}
+
+	@Override
+	@Transactional(rollbackFor = DaoException.class)
+	public Map<String, Object> updatePayPassword(ExtendMap<String, Object> params) throws DaoException {
+		Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            // 检查参数
+            if (CollectionUtils.isEmpty(params)) {
+                //参数为空
+                outParamEmptyError(result);
+                return result;
+            }
+            String password = params.getString("newPwd");
+            String phone = params.getString("phone");
+            String personalId = params.getString("personalId");
+            // 检查手机号码和验证码
+            String identifyingCode = params.getString("identifyingCode");
+
+            if (StringUtils.isBlank(phone) || StringUtils.isBlank(password) || StringUtils.isBlank(personalId) || StringUtils.isBlank(identifyingCode)) {
+            	//参数为空
+            	outParamEmptyError(result);
+            	return result;
+            }
+//            if (!checkPhoneAndMsgCode(phone, identifyingCode, result, request)) {
+//                return result;
+//            }
+            
+            //修改会员支付密码
+            memberapiservice.updatePayPassword(personalId,PasswordProvider.encrypt(password));
+            outSuccess(result, "修改支付密码成功！");
+        } catch (Exception e) {
+        	e.printStackTrace();
+            outError(result, "修改支付密码失败！系统繁忙...");
+        }
+        return result;
+	}
+
+	@Override
+	public Map<String, Object> queryUserByOpenId(ExtendMap<String, Object> params, Map<String, Object> result) {
+		try {
+			//检查参数
+			if (checkParams(params, result)) return result;
+			
+			//接受参数
+			String openId = params.getString("openId");
+			
+			//校验参数
+			if (checkString(result, openId)) return result;
+
+			CustomerUser customerUser = customerUserapiservice.queryUserByOpenId(openId);
+			if (customerUser != null) {
+				Integer userId = customerUser.getUserId();
+				Integer customerId = customerUser.getCustomerId();
+				PersonalMember member = memberapiservice.findMemberByUserIdAndCustomerId(userId, customerId);
+				
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("userId", userId);
+				map.put("nickName", member.getNickName());
+				map.put("phone", customerUser.getAccount());
+				map.put("personalId", member.getId());// personalId
+				map.put("headImg", member.getHeadImg());
+				
+				outSuccess(result, map);
+			} else {
+				outSuccess(result, "用户不存在");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			outError(result, "根据openid查询用户信息失败！系统繁 忙...");
+		}
+		return result;
+	}
+
+	@Override
+	@Transactional(rollbackFor = DaoException.class)
+	public Map<String, Object> bindPhone(ExtendMap<String, Object> params, Map<String, Object> result) throws DaoException {
+		try {
+			//检查参数
+			if (checkParams(params, result)) return result;
+			
+			//接受参数
+			Integer customerId = params.getInteger("customerId");
+			String userName = params.getString("phone");
+			String openId = params.getString("openId");
+			String headImg = params.getString("headImg");
+			String nickName = params.getString("nickName");
+			Integer sex = params.getInteger("sex");//0男 1女 2保密
+			String identifyingCode = params.getString("identifyingCode");
+			Integer bindType = params.getInteger("bindType");//0微信公众号 1微信快捷登录 2QQ快捷登录 3微博快捷登录
+			
+			//校验参数
+			if (sex != 0 && sex != 1 && sex != 2) {
+				outError(result, "性别参数错误");
+				return result;
+			}
+			if (bindType != 0 && bindType != 1 && bindType != 2 && bindType != 3) {
+				outError(result, "绑定类型参数错误");
+				return result;
+			}
+//			if (!checkPhoneAndMsgCode(userName, identifyingCode, result, request)) {
+//				return result;
+//            }
+			if (checkString(result, openId)) return result;
+			
+			//业务处理
+			if (bindType == 0) {
+				//手机号码是否存在
+	            boolean flag = isRegister(userName, customerId, result);
+	            //如果已经注册,直接更新customer_user表对应的open_id.
+	            //如果未注册,则根据手机号码查询对应的user是否存在，如果不存在，则往user表添加一条记录，然后往customer_user表里面插入一条记录
+	            if (flag) {
+	            	customerUserJtaApiService.updateOpenIdByAccountAndCustomerId(userName, customerId, openId);
+	            } else {
+	            	User user = dao.findUserByAccount(userName);
+	            	if (user != null) {
+	            		CustomerUser customerUser = new CustomerUser();
+		            	customerUser.setAccount(userName);
+		            	customerUser.setCreatetime(getNowDateTime());
+		            	customerUser.setCustomerId(customerId);
+		            	customerUser.setOpenId(openId);
+		            	customerUser.setPassword(PasswordProvider.encrypt("111111"));
+		            	customerUser.setUserId(user.getId());
+		            	customerUserJtaApiService.addCustomerUser(customerUser);
+	            	} else {
+	            		user = new User();
+	            		user.setAccount(userName);
+	                    user.setCreateTime(getNowDateTime());
+	                    user.setIsEnable(true);
+	                    user.setUserType(0);
+	                    dao.insert(user);
+	                    Integer userId = user.getId();
+	                    
+	                    CustomerUser customerUser = new CustomerUser();
+		            	customerUser.setAccount(userName);
+		            	customerUser.setCreatetime(getNowDateTime());
+		            	customerUser.setCustomerId(customerId);
+		            	customerUser.setOpenId(openId);
+		            	customerUser.setPassword(PasswordProvider.encrypt("111111"));
+		            	customerUser.setUserId(userId);
+		            	customerUserJtaApiService.addCustomerUser(customerUser);
+		            	
+		            	//添加会员信息
+		                PersonalMember member = new PersonalMember();
+		                member.setUserId(userId);
+		                member.setCustomerId(customerId);
+		                member.setHeadImg(headImg);
+		                member.setCreatetime(getNowDateTime());
+		                member.setIsvalid(0);
+		                member.setSex(sex);
+		                member.setNickName(nickName);
+		                member.setPhone(userName);
+		                memberapiservice.add(member);
+	            	}
+	            }
+			} else {
+				User user = dao.findUserByAccount(userName);
+				if (user != null) {
+            		OauthLogin oauthLogin = new OauthLogin();
+            		oauthLogin.setAccount(userName);
+            		oauthLogin.setCreatetime(getNowDateTime());
+            		oauthLogin.setCustomerId(customerId);
+            		oauthLogin.setOauthId(openId);
+            		oauthLogin.setUserId(user.getId());
+            		oauthLoginapiservice.save(oauthLogin);
+            	} else {
+            		user = new User();
+            		user.setAccount(userName);
+                    user.setCreateTime(getNowDateTime());
+                    user.setIsEnable(true);
+                    user.setUserType(0);
+                    dao.insert(user);
+                    Integer userId = user.getId();
+                    
+                    CustomerUser customerUser = new CustomerUser();
+	            	customerUser.setAccount(userName);
+	            	customerUser.setCreatetime(getNowDateTime());
+	            	customerUser.setCustomerId(customerId);
+	            	customerUser.setOpenId(openId);
+	            	customerUser.setPassword(PasswordProvider.encrypt("111111"));
+	            	customerUser.setUserId(userId);
+	            	customerUserJtaApiService.addCustomerUser(customerUser);
+	            	
+	            	OauthLogin oauthLogin = new OauthLogin();
+            		oauthLogin.setAccount(userName);
+            		oauthLogin.setCreatetime(getNowDateTime());
+            		oauthLogin.setCustomerId(customerId);
+            		oauthLogin.setOauthId(openId);
+            		oauthLogin.setUserId(user.getId());
+            		oauthLoginapiservice.save(oauthLogin);
+            		
+            		//添加会员信息
+	                PersonalMember member = new PersonalMember();
+	                member.setUserId(userId);
+	                member.setCustomerId(customerId);
+	                member.setHeadImg(headImg);
+	                member.setCreatetime(getNowDateTime());
+	                member.setIsvalid(0);
+	                member.setSex(sex);
+	                member.setNickName(nickName);
+	                member.setPhone(userName);
+	                memberapiservice.add(member);
+            	}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			outError(result, "授权登录之后绑定手机号码失败！系统繁 忙...");
+		}
+		return result;
+	}
+
+	@Override
+	public Map<String, Object> checkIsBindPhone(ExtendMap<String, Object> params, Map<String, Object> result) {
+		try {
+			//检查参数
+			if (checkParams(params, result)) return result;
+			
+			//接受参数
+			String openId = params.getString("openId");
+			Integer bindType = params.getInteger("bindType");//0微信公众号 1微信快捷登录 2QQ快捷登录 3微博快捷登录
+			
+			//校验参数
+			if (bindType != 0 && bindType != 1 && bindType != 2 && bindType != 3) {
+				outError(result, "绑定类型参数错误");
+				return result;
+			}
+			if (checkString(result, openId)) return result;
+			
+			//业务处理
+			if (bindType == 0) {
+				CustomerUser customerUser = customerUserapiservice.queryUserByOpenId(openId);
+				if (customerUser != null) {
+					Integer userId = customerUser.getUserId();
+					Integer customerId = customerUser.getCustomerId();
+					PersonalMember member = memberapiservice.findMemberByUserIdAndCustomerId(userId, customerId);
+					
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("userId", userId);
+					map.put("nickName", member.getNickName());
+					map.put("phone", customerUser.getAccount());
+					map.put("personalId", member.getId());// personalId
+					map.put("headImg", member.getHeadImg());
+					
+					outSuccess(result, map);
+				}else {
+					outSuccess(result, 0);
+				}
+			} else {
+				OauthLogin oauthLogin = oauthLoginapiservice.queryUserByOauthId(openId);
+				if (oauthLogin != null) {
+					Integer userId = oauthLogin.getUserId();
+					Integer customerId = oauthLogin.getCustomerId();
+					PersonalMember member = memberapiservice.findMemberByUserIdAndCustomerId(userId, customerId);
+					
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("userId", userId);
+					map.put("nickName", member.getNickName());
+					map.put("phone", oauthLogin.getAccount());
+					map.put("personalId", member.getId());// personalId
+					map.put("headImg", member.getHeadImg());
+					
+					outSuccess(result, map);
+				} else {
+					outSuccess(result, 0);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			outError(result, "检查是否需要绑定手机号码失败！系统繁 忙...");
+		}
+		return result;
+	}
+
+}

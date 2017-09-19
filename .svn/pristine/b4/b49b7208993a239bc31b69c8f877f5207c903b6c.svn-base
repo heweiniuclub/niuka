@@ -1,0 +1,151 @@
+package com.niuka.o2o.controller.agent;
+
+import com.niuka.agent.model.Agent;
+import com.niuka.agent.model.AgentLevel;
+import com.niuka.agent.rpc.AgentLevelService;
+import com.niuka.agent.rpc.AgentService;
+import com.niuka.common.controller.BaseController;
+import com.niuka.common.exception.DaoException;
+import com.niuka.common.model.Pagination;
+import com.niuka.common.model.Result;
+import com.niuka.common.validator.Validator;
+import com.niuka.common.validator.annotation.ValidateParam;
+import com.niuka.user.client.SessionUser;
+import com.niuka.user.client.SessionUtils;
+import com.niuka.user.model.App;
+import com.niuka.user.model.Role;
+import com.niuka.user.model.User;
+import com.niuka.user.rpc.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+
+/**
+ * 代理商级别管理
+ *
+ * @author hewei
+ */
+@Api(tags = "代理商级别管理")
+@Controller
+@RequestMapping("/agent")
+public class AgentController extends BaseController {
+
+    @Resource
+    private AgentService agentservice;
+
+    @Resource
+    private AgentLevelService agentlevelservice;
+
+    @Resource
+    private UserService userservice;
+
+    @Resource
+    private RoleService roleservice;
+
+    @Resource
+    private UserRoleService userroleservice;
+
+    @Resource
+    private AppService appservice;
+
+
+
+    @ApiOperation("初始页")
+    @RequestMapping(method = RequestMethod.GET)
+    public String execute(Model model) {
+
+        // 查询所有的代理商级别
+        List<AgentLevel> agentLevels = agentlevelservice.queryAllAgentLevel();
+        model.addAttribute("agentLevels", agentLevels);
+        model.addAttribute("appList", getAppList());
+        return "/agent/agent";
+    }
+
+    @ApiOperation("新增/修改页")
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public String edit(@ApiParam(value = "id") Integer id, Model model, HttpServletRequest request) {
+        Agent agent;
+        if (id == null) {
+            agent = new Agent();
+        } else {
+            agent = agentservice.get(id);
+        }
+        model.addAttribute("agent", agent);
+
+        //查询角色信息当前app的
+        SessionUser sessionUser = SessionUtils.getSessionUser(request);
+        // 设置登录用户名
+        User byAccount = userservice.findByAccount(sessionUser.getAccount());
+        List<Role> roles = roleservice.queryRoleListByAppId(byAccount.getId());
+
+        model.addAttribute("roles", roles);
+        model.addAttribute("apps", getAppList());
+        return "/agent/agent_edit";
+    }
+
+    private List<App> getAppList() {
+        return appservice.findByAll(null);
+    }
+
+    @ApiOperation("列表")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public @ResponseBody
+    Result list(
+            @ApiParam(value = "代理商名称", required = true) @ValidateParam({Validator.NOT_BLANK}) String agent_name,
+            @ApiParam(value = "代理商联系人姓名", required = true) @ValidateParam({Validator.NOT_BLANK}) String agent_contacts_name,
+            @ApiParam(value = "代理商联系人电话", required = true) @ValidateParam({Validator.MOBILE}) String agent_contacts_phone,
+            @ApiParam(value = "代理商级别", required = true) @ValidateParam({Validator.MOBILE}) Integer agentLevelId,
+            @ApiParam(value = "开始页码", required = true) @ValidateParam({Validator.NOT_BLANK}) Integer pageNo,
+            @ApiParam(value = "显示条数", required = true) @ValidateParam({Validator.NOT_BLANK}) Integer pageSize) {
+        return Result.createSuccessResult().setData(agentservice.findPaginationByParam(agent_name,agent_contacts_name, agent_contacts_phone,agentLevelId,new Pagination<Agent>(pageNo, pageSize)));
+    }
+
+    @ApiOperation("新增/修改提交")
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public @ResponseBody
+    Result save(
+            @ApiParam(value = "id") Integer id,
+            @ApiParam(value = "代理商名称", required = true) @ValidateParam({Validator.NOT_BLANK}) String agent_name,
+            @ApiParam(value = "代理商联系人姓名", required = true) @ValidateParam({Validator.NOT_BLANK}) String agent_contacts_name,
+            @ApiParam(value = "代理商联系人电话", required = true) @ValidateParam({Validator.MOBILE}) String agent_contacts_phone,
+            @ApiParam(value = "详细地址", required = true) @ValidateParam({Validator.NOT_BLANK}) String agent_address,
+            @ApiParam(value = "省id") int province,
+            @ApiParam(value = "市id") int city,
+            @ApiParam(value = "区域id") int area,
+            @ApiParam(value = "角色id") int role_id,
+            @ApiParam(value = "应用id") int app_id
+    ) {
+        Agent agent = new Agent();
+        agent.setAgentAddress(agent_address);
+        agent.setAgentContactsName(agent_contacts_name);
+        agent.setAgentContactsPhone(agent_contacts_phone);
+        agent.setAgentName(agent_name);
+        agent.setProvId(province);
+        agent.setCityId(city);
+        agent.setAreaId(area);
+        agent.setRoleId(role_id);
+        agent.setAppId(app_id);
+        agentservice.saveAgent(agent);
+
+        return Result.createSuccessResult();
+    }
+
+    @ApiOperation("删除")
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public @ResponseBody
+    Result delete(
+            @ApiParam(value = "ids", required = true) @ValidateParam({Validator.NOT_BLANK}) String ids) throws DaoException {
+        agentservice.deleteById(getAjaxIds(ids));
+        return Result.createSuccessResult();
+    }
+}

@@ -1,0 +1,48 @@
+package com.niuka.agent.service;
+
+import com.niuka.agent.dao.AgentLevelDao;
+import com.niuka.agent.model.AgentLevel;
+import com.niuka.agent.rpc.AgentLevelService;
+import com.niuka.common.model.Pagination;
+import com.niuka.common.service.mybatis.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("agentlevelservice")
+public class AgentLevelServiceImpl extends ServiceImpl<AgentLevelDao, AgentLevel, Integer> implements AgentLevelService {
+
+
+	@Autowired
+	public void setDao(AgentLevelDao dao) {
+		this.dao = dao;
+	}
+
+	public void save(AgentLevel t) {
+		super.save(t);
+	}
+
+
+	public Pagination<AgentLevel> findPaginationByName(String agentLevelName, Pagination<AgentLevel> p) {
+		dao.findPaginationByName(agentLevelName, p);
+		return p;
+	}
+
+	/**
+	 * 查询所有的代理商级别
+	 *
+	 * @return
+	 */
+	@Override
+	public List<AgentLevel> queryAllAgentLevel() {
+		return dao.queryAllAgentLevel();
+	}
+
+
+	public void deleteById(List<Integer> idList) {
+		verifyRows(dao.deleteById(idList), idList.size(), "代理商级别数据库删除失败");
+	}
+
+
+}

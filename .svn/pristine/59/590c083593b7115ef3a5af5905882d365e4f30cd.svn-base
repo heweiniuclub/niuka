@@ -1,0 +1,39 @@
+package com.niuka.systemset.service;
+
+import com.niuka.common.model.Pagination;
+import com.niuka.common.service.mybatis.impl.ServiceImpl;
+
+import com.niuka.systemset.dao.AreaDao;
+import com.niuka.systemset.dao.CityDao;
+import com.niuka.systemset.model.Area;
+import com.niuka.systemset.model.City;
+
+import com.niuka.systemset.rpc.AreaService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Collection;
+import java.util.List;
+
+@Service("areaservice")
+public class AreaServiceImpl extends ServiceImpl<AreaDao, Area,Integer> implements AreaService {
+
+	@Autowired
+	public void setDao(AreaDao dao) {
+		this.dao = dao;
+	}
+
+
+	/**
+	 * 查询所有的地区根据城市id
+	 *
+	 * @param cityId
+	 * @return
+	 */
+	@Override
+	public List<Area> queryAreaByCid(int cityId) {
+		return dao.queryAreaByCid(cityId) ;
+	}
+}

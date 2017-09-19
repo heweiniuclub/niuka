@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.niuka.customer.dao.CustomerDao">
+	<resultMap id="queryResultMap" type="com.niuka.customer.model.Customer">
+		<!-- 流水号 -->
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<!-- 创建时间 -->
+		<result column="createtime" property="createtime" jdbcType="TIMESTAMP"/>
+		<!-- 最后一次更新时间 -->
+		<result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP"/>
+		<!-- 客户模式(0 O2O模式) -->
+		<result column="customer_mode" property="customerMode" jdbcType="TINYINT"/>
+		<!-- 客户类型(0单店 1多店 2线下) -->
+		<result column="customer_type" property="customerType" jdbcType="TINYINT"/>
+		<!-- 客户联系人 -->
+		<result column="customer_name" property="customerName" jdbcType="VARCHAR"/>
+		<!-- 客户电话 -->
+		<result column="customer_phone" property="customerPhone" jdbcType="VARCHAR"/>
+		<!-- 客户详细地址 -->
+		<result column="customer_address" property="customerAddress" jdbcType="VARCHAR"/>
+		<!-- 省份 -->
+		<result column="prov_id" property="provId" jdbcType="INTEGER"/>
+		<!-- 城市 -->
+		<result column="city_id" property="cityId" jdbcType="INTEGER"/>
+		<!-- 区域 -->
+		<result column="area_id" property="areaId" jdbcType="INTEGER"/>
+		<!-- 入网时间 -->
+		<result column="open_time" property="openTime" jdbcType="TIMESTAMP"/>
+		<!-- 到期时间 -->
+		<result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+		<!-- 是否有效（0有效 1无效） -->
+		<result column="isvalid" property="isvalid" jdbcType="TINYINT"/>
+		<!-- 审核状态（0未审核 1同意 2拒绝） -->
+		<result column="status" property="status" jdbcType="TINYINT"/>
+		<!-- 审核备注 -->
+		<result column="refuse_reason" property="refuseReason" jdbcType="VARCHAR"/>
+		<!-- 审核时间 -->
+		<result column="refuse_time" property="refuseTime" jdbcType="TIMESTAMP"/>
+		<!-- 所属代理商ID或者直销人员ID -->
+		<result column="agent_id" property="agentId" jdbcType="INTEGER"/>
+		<!-- 用户ID -->
+		<result column="user_id" property="userId" jdbcType="INTEGER"/>
+		<!-- 门店数量 -->
+		<result column="store_num" property="storeNum" jdbcType="INTEGER"/>
+		<!-- 账号来源(0代理商 1直销人员) -->
+		<result column="account_source" property="accountSource" jdbcType="TINYINT"/>
+	</resultMap>
+
+	<!-- 保存,保存全部字段 -->
+	<insert id="insert" parameterType="com.niuka.customer.model.Customer" keyProperty="id" keyColumn="id" useGeneratedKeys="true">INSERT INTO customer ( `createtime` , `modified_time` , `customer_mode` , `customer_type` , `customer_name` , `customer_phone` , `customer_address` , `prov_id` , `city_id` , `area_id` , `open_time` , `end_time` , `isvalid` , `status` , `refuse_reason` , `refuse_time` , `agent_id` , `user_id` , `store_num` , `account_source` ) VALUES ( #{createtime,jdbcType=TIMESTAMP} , #{modifiedTime,jdbcType=TIMESTAMP} , #{customerMode,jdbcType=TINYINT} , #{customerType,jdbcType=TINYINT} , #{customerName,jdbcType=VARCHAR} , #{customerPhone,jdbcType=VARCHAR} , #{customerAddress,jdbcType=VARCHAR} , #{provId,jdbcType=INTEGER} , #{cityId,jdbcType=INTEGER} , #{areaId,jdbcType=INTEGER} , #{openTime,jdbcType=TIMESTAMP} , #{endTime,jdbcType=TIMESTAMP} , #{isvalid,jdbcType=TINYINT} , #{status,jdbcType=TINYINT} , #{refuseReason,jdbcType=VARCHAR} , #{refuseTime,jdbcType=TIMESTAMP} , #{agentId,jdbcType=INTEGER} , #{userId,jdbcType=INTEGER} , #{storeNum,jdbcType=INTEGER} , #{accountSource,jdbcType=TINYINT} )</insert>
+
+	<!-- 根据主键获取单条记录 -->
+	<select id="get" resultMap="queryResultMap" parameterType="com.niuka.customer.model.Customer">SELECT t.id , t.createtime , t.modified_time , t.customer_mode , t.customer_type , t.customer_name , t.customer_phone , t.customer_address , t.prov_id , t.city_id , t.area_id , t.open_time , t.end_time , t.isvalid , t.status , t.refuse_reason , t.refuse_time , t.agent_id , t.user_id , t.store_num , t.account_source FROM customer t WHERE id = #{id,jdbcType=INTEGER}</select>
+
+	<!-- 更新,更新全部字段 -->
+	<update id="update" parameterType="com.niuka.customer.model.Customer">UPDATE customer
+		<set>createtime=#{createtime,jdbcType=TIMESTAMP}, modified_time=#{modifiedTime,jdbcType=TIMESTAMP}, customer_mode=#{customerMode,jdbcType=TINYINT}, customer_type=#{customerType,jdbcType=TINYINT}, customer_name=#{customerName,jdbcType=VARCHAR}, customer_phone=#{customerPhone,jdbcType=VARCHAR}, customer_address=#{customerAddress,jdbcType=VARCHAR}, prov_id=#{provId,jdbcType=INTEGER}, city_id=#{cityId,jdbcType=INTEGER}, area_id=#{areaId,jdbcType=INTEGER}, open_time=#{openTime,jdbcType=TIMESTAMP}, end_time=#{endTime,jdbcType=TIMESTAMP}, isvalid=#{isvalid,jdbcType=TINYINT}, status=#{status,jdbcType=TINYINT}, refuse_reason=#{refuseReason,jdbcType=VARCHAR}, refuse_time=#{refuseTime,jdbcType=TIMESTAMP}, agent_id=#{agentId,jdbcType=INTEGER}, user_id=#{userId,jdbcType=INTEGER}, store_num=#{storeNum,jdbcType=INTEGER}, account_source=#{accountSource,jdbcType=TINYINT},</set> WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<delete id="deleteById" parameterType="list" statementType="PREPARED">DELETE FROM customer
+		<choose>
+			<when test="list == null or list.size() == 0">WHERE 1 != 1</when>
+			<when test="list.size() == 1">WHERE `id` = 
+				<foreach collection="list" item="id">#{id}</foreach> 
+			</when>
+			<otherwise>WHERE `id` in 
+				<foreach collection="list" item="id" open="(" separator="," close=")">#{id}</foreach>
+			</otherwise>
+		</choose> 
+	</delete>
+
+</mapper>

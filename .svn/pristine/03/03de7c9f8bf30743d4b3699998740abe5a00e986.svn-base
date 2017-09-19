@@ -1,0 +1,6 @@
+/**
+ * jQuery bootbox Custom
+ * 
+ * Author hewei
+ */
+bootbox.setDefaults({locale : "zh_CN"});

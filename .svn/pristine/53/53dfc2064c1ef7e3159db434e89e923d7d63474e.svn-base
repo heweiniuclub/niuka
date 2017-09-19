@@ -1,0 +1,116 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>niuka_agent_module</artifactId>
+        <groupId>com.niuka.agent.module</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>niuka_agent_provider</artifactId>
+    <packaging>war</packaging>
+    <name>niuka_agent</name>
+    <url>http://maven.apache.org</url>
+    <dependencies>
+
+
+        <!-- J2EE支持 -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- 基础项目支持 -->
+        <dependency>
+            <groupId>com.niuka</groupId>
+            <artifactId>niuka_common</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!-- sso单点登录客户端 -->
+        <dependency>
+            <groupId>com.niuka.user.module</groupId>
+            <artifactId>niuka_user_api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <!-- 代理商-->
+        <dependency>
+            <groupId>com.niuka.agent.module</groupId>
+            <artifactId>niuka_agent_api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+
+        <!-- 用户-->
+        <dependency>
+            <groupId>com.niuka.user.module</groupId>
+            <artifactId>niuka_user_api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <!-- mysql驱动包 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <!-- Springfox API文档 -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+
+        <!-- dubbo -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Netty -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>4.3.2.RELEASE</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <finalName>niuka_agent_provider</finalName>
+    </build>
+</project>

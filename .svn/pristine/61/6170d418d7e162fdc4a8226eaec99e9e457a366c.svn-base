@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.niuka.user.dao.api.UserMapper">
+	
+	<resultMap id="BaseResultMap" type="com.niuka.user.model.User">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="account" property="account" jdbcType="VARCHAR"/>
+		<result column="password" property="password" jdbcType="VARCHAR"/>
+		<result column="lastLoginIp" property="lastLoginIp" jdbcType="VARCHAR"/>
+		<result column="lastLoginTime" property="lastLoginTime" jdbcType="TIMESTAMP"/>
+		<result column="loginCount" property="loginCount" jdbcType="INTEGER"/>
+		<result column="parent_id" property="parentId" jdbcType="INTEGER"/>
+		<result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+		<result column="isEnable" property="isEnable" jdbcType="BOOLEAN"/>
+		<!-- 用户类型(0普通会员 1代理商 2O2O客户 3.管理员) -->
+		<result column="userType" property="userType" jdbcType="TINYINT"/>
+	</resultMap>
+  	
+  	<sql id="Base_Column_List" >
+    	id,account,password,lastLoginIp,lastLoginTime,loginCount,parent_id,createTime,isEnable,userType
+    </sql>
+    
+    <select id="findUserByAccount" resultMap="BaseResultMap" parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from sys_user
+		where 1 = 1 
+		<if test="username != null and username != '' ">
+			AND account= #{username}
+		</if>
+	</select>
+	
+    <select id="checkIsRegister" resultType="java.lang.Integer" parameterType="map">
+		select count(*) from customer_user where account=#{username} and customer_id=#{customerId}
+	</select>
+	
+	<select id="checkPhoneAndPasswordExist" resultType="java.lang.Integer" parameterType="map">
+		select count(*) from customer_user where account = #{username} and password = #{password} and customer_id = #{customerId}
+	</select>
+	
+	<!-- 保存用户注册信息 -->
+	<insert id="insert" parameterType="User" statementType="PREPARED" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO sys_user(
+			account,
+			createTime,
+			isEnable,
+			userType
+		) 
+		VALUES (
+			#{account},
+			#{createTime},
+			#{isEnable},
+			#{userType}
+		)
+	</insert>
+	
+</mapper>

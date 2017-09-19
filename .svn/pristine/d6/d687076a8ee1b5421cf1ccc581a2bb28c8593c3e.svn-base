@@ -1,0 +1,41 @@
+package com.niuka.agent.service;
+
+import com.niuka.agent.dao.AgentRechargeLogDao;
+import com.niuka.agent.model.AgentRechargeLog;
+import com.niuka.agent.rpc.AgentRechargeLogService;
+import com.niuka.common.model.Pagination;
+import com.niuka.common.service.mybatis.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("agentRechargeLogService")
+public class AgentRechargeLogServiceImpl extends ServiceImpl<AgentRechargeLogDao, AgentRechargeLog, Integer> implements AgentRechargeLogService {
+
+
+    @Autowired
+    public void setDao(AgentRechargeLogDao dao) {
+        this.dao = dao;
+    }
+
+
+    public void deleteById(List<Integer> idList) {
+        verifyRows(dao.deleteById(idList), idList.size(), "代理商充值记录删除失败");
+    }
+
+
+    /**
+     * 根据时间查询所有的充值记录
+     *
+     * @param startTime
+     * @param endTime
+     * @param agentId
+     * @return
+     */
+    @Override
+    public  Pagination<AgentRechargeLog> findByTime(String startTime, String endTime, Integer agentId, Pagination<AgentRechargeLog> p) {
+        dao.findByTime(startTime,endTime,agentId,p);
+        return p ;
+    }
+}

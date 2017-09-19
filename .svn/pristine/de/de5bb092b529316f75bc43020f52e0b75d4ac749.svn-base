@@ -1,0 +1,129 @@
+package com.niuka.user.rpc.api;
+
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.transaction.annotation.Transactional;
+
+import com.niuka.common.exception.DaoException;
+import com.niuka.common.model.ExtendMap;
+import com.niuka.common.service.mybatis.Service;
+import com.niuka.user.model.App;
+import com.niuka.user.model.PersonalMember;
+import com.niuka.user.model.User;
+
+/**
+ * Created by admin on 2017/9/10.
+ */
+public interface UserApiService extends Service<User, Integer> {
+
+	/**
+	 * 登录
+	 * @param customerId
+	 * @param username
+	 * @param password
+	 * @param loginType
+	 * @param oauthLoginType
+	 * @param identifyingCode
+	 * @param oauthName
+	 * @param oauthId
+	 * @param request
+	 * @return
+	 */
+    public Map<String, Object> login(Integer customerId, String username, String password, Integer loginType, Integer oauthLoginType, String identifyingCode, String oauthName, String oauthId, HttpServletRequest request);
+
+    /**
+     * 登录
+     * @param request 
+     * @param inputParam
+     * @return
+     */
+	public Map<String, Object> login(Map<String, Object> params, HttpServletRequest request);
+
+	/**
+	 * 用户注册
+	 * @param result 
+	 * @param extendMap
+	 * @return
+	 */
+	@Transactional
+	public Map<String, Object> register(Map<String, Object> params, Map<String, Object> result) throws DaoException;
+
+	/**
+	 * 发送短信
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> sendMsg(ExtendMap<String, Object> params, HttpServletRequest request);
+
+	/**
+	 * 忘记密码
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	@Transactional
+	public Map<String, Object> forgetPassword(ExtendMap<String, Object> params) throws DaoException;
+
+	/**
+	 * 修改用户登录密码
+	 * @param params
+	 * @return
+	 */
+	@Transactional
+	public Map<String, Object> updatePassword(ExtendMap<String, Object> params) throws DaoException;
+
+	/**
+	 * 校验短信验证码
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	public Map<String, Object> checkMsgCode(ExtendMap<String, Object> params, HttpServletRequest request);
+
+	/**
+	 * 修改绑定手机号码
+	 * @param params
+	 * @return
+	 */
+	@Transactional
+	public Map<String, Object> updateBindPhone(ExtendMap<String, Object> params) throws DaoException;
+
+	/**
+	 * 修改会员支付密码
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	@Transactional
+	public Map<String, Object> updatePayPassword(ExtendMap<String, Object> params) throws DaoException;
+
+	/**
+	 * 查询用户信息根据open_id
+	 * @param params
+	 * @param result
+	 * @return
+	 */
+	public Map<String, Object> queryUserByOpenId(ExtendMap<String, Object> params, Map<String, Object> result);
+
+	/**
+	 * 微信端微信用户授权登录之后绑定手机号码
+	 * @param params
+	 * @param result
+	 * @param request
+	 * @return
+	 */
+	@Transactional
+	public Map<String, Object> bindPhone(ExtendMap<String, Object> params, Map<String, Object> result) throws DaoException;
+
+	/**
+	 * 检查是否需要绑定手机号码
+	 * @param params
+	 * @param result
+	 * @return
+	 */
+	public Map<String, Object> checkIsBindPhone(ExtendMap<String, Object> params, Map<String, Object> result);
+
+}

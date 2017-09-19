@@ -1,0 +1,41 @@
+package com.niuka.agent.rpc;
+
+import com.niuka.agent.model.Agent;
+import com.niuka.common.exception.DaoException;
+import com.niuka.common.model.Pagination;
+import com.niuka.common.service.mybatis.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+
+/**
+ * 代理商服务接口
+ * 
+ * @author hewei
+ */
+public interface AgentService extends Service<Agent, Integer> {
+
+	/**
+	 * 根据条件查询代理商信息
+	 * @param agentName 代理商名称
+	 * @param agentContactsPhone 代理商联系电话
+	 * @param agentContactsName 代理商联系名称
+	 * @return 分页对象集合
+	 */
+	public Pagination<Agent> findPaginationByParam(String agentName ,String agentContactsPhone,String agentContactsName,Integer agentLevelId, Pagination<Agent> p);
+
+
+	/**
+	 * 保存数据 需要事务
+	 */
+	@Transactional
+	public void saveAgent(Agent agent) throws DaoException;
+
+
+	/**
+	 * 保存数据 需要事务
+	 */
+	@Transactional
+	public void deleteUserAndRole(List<Integer> agentsId,int appId) throws DaoException;
+}

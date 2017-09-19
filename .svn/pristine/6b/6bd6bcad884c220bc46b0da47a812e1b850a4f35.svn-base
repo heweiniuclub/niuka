@@ -1,0 +1,406 @@
+package com.niuka.api.server.controller.user;
+
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.niuka.api.server.controller.base.BaseController;
+import com.niuka.api.server.controller.param.input.bindphone.BindPhoneRequest;
+import com.niuka.api.server.controller.param.input.bindphone.BindPhoneVO;
+import com.niuka.api.server.controller.param.input.bindphone.CheckBindPhoneRequest;
+import com.niuka.api.server.controller.param.input.bindphone.CheckBindPhoneVO;
+import com.niuka.api.server.controller.param.input.forgetpassword.ForgetPwdRequest;
+import com.niuka.api.server.controller.param.input.forgetpassword.ForgetPwdVO;
+import com.niuka.api.server.controller.param.input.login.LoginRequest;
+import com.niuka.api.server.controller.param.input.msg.SendMsgRequest;
+import com.niuka.api.server.controller.param.input.msg.SendMsgVO;
+import com.niuka.api.server.controller.param.input.msgcode.MsgCodeRequest;
+import com.niuka.api.server.controller.param.input.msgcode.MsgCodeVO;
+import com.niuka.api.server.controller.param.input.paypassword.PayPasswordRequest;
+import com.niuka.api.server.controller.param.input.paypassword.PayPasswordVO;
+import com.niuka.api.server.controller.param.input.register.RegisterRequest;
+import com.niuka.api.server.controller.param.input.updatebindphone.UpdateBindPhoneRequest;
+import com.niuka.api.server.controller.param.input.updatebindphone.UpdateBindPhoneVO;
+import com.niuka.api.server.controller.param.input.updatepwd.UpdatePwdRequest;
+import com.niuka.api.server.controller.param.input.updatepwd.UpdatePwdVO;
+import com.niuka.common.cache.RedisCache;
+import com.niuka.common.model.AbstractBaseFactory;
+import com.niuka.common.model.ExtendMap;
+import com.niuka.common.provider.IdProvider;
+import com.niuka.common.util.ClassUtil;
+import com.niuka.common.util.OutputUtil;
+import com.niuka.user.rpc.api.UserApiService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author hewei
+ */
+@Api(tags = "用户")
+@Controller
+@RequestMapping("/api/user")
+public class UserController extends BaseController {
+
+
+	@Resource
+	private RedisCache<String> redisCache;
+	
+	@Resource
+	private UserApiService userapiservice;
+
+	@ApiOperation("登陆")
+	@RequestMapping(value = "loginTest",method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> loginTest(String paramStr) {
+		
+		LOG.info("查询订单详情...............................");
+    	Map<String, Object> result = new HashMap<>();
+    	try {
+    		ExtendMap<String, Object> paramsMap = new ExtendMap<String, Object>(paramStr);
+    		System.out.println(paramsMap.toString());
+//    		return orderService.orderDetail(paramsMap,result);
+    	} catch (Exception e) {
+    		LOG.error("查询订单详情失败!", e.getMessage());
+    		outError(result, "查询订单详情失败!系统繁忙...");
+    		return result;
+    	}
+    	
+		Map<String,Object> map = new HashMap<String,Object>();
+		Map<String,Object> data = new HashMap<String,Object>();
+		data.put("userName","zhangsan");
+
+		// 登陆成功返回一个token给客服端
+		String token = IdProvider.createUUIDId();
+		data.put("token",token);
+
+		String personalId="1";// 获取用户之后得到用户id
+
+		redisCache.set(personalId,token);
+		System.out.println(paramStr);
+//		System.out.println(userApiService.login("admin","26524bdf4ea266f131566a89e8f4972c"));
+
+
+		// 客服端 根据t md5加密
+
+		// 服务端验证时间戳
+		// 将personalID+token+timestame 进行md5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               d5加密与前端的进行对比 正确则放行，否则报鉴权错误
+
+
+		outSuccess(map,data);
+		return map ;
+	}
+	
+	/**
+	 * 登录
+	 * @param paramStr
+	 * @return
+	 * @see [类、类#方法、类#成员]
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public Map<String, Object> login(String paramStr) {
+		LOG.info("login---------------------------");
+		LoginRequest login = JSON.parseObject(paramStr, LoginRequest.class);
+        Map<String, Object> result = new HashMap<>();
+        try {
+        	String username = login.getData().getName();
+        	String password = login.getData().getPassword();
+        	Integer loginType = login.getData().getLoginType();//登录类型    0第三方登录 1普通登录，2短信验证码快捷登录
+        	Integer oauthLoginType = login.getData().getOauthLoginType();//0 QQ登录 1微信登录
+        	String identifyingCode = login.getData().getIdentifyingCode();
+        	String oauthName = login.getData().getOauthName();
+        	String oauthId = login.getData().getOauthId();
+        	Integer customerId = ClassUtil.getInteger(login.getCustomerId());
+        	
+        	Map<String, Object> params = new HashMap<String, Object>();
+        	params.put("customerId", customerId);
+        	params.put("username", username);
+        	params.put("password", password);
+        	params.put("loginType", loginType);
+        	params.put("oauthLoginType", oauthLoginType);
+        	params.put("identifyingCode", identifyingCode);
+        	params.put("oauthName", oauthName);
+        	params.put("oauthId", oauthId);
+        	
+//            Map<String, Object> outPutParam = userapiservice.login(customerId, username, password, loginType, oauthLoginType, identifyingCode, oauthName, oauthId, request);
+            Map<String, Object> outPutParam = userapiservice.login(params, request);
+            checkResult(outPutParam);
+            
+            //输出参数
+            OutputUtil.outSuccess(result, outPutParam);
+        } catch (Exception e) {
+        	e.printStackTrace();
+            LOG.error("登录失败！", e);
+            outError(result, "登录失败！系统繁忙...");
+        }
+        return result;
+	}
+	
+	/**
+	 * 用户注册
+	 * @param paramStr
+	 * @return
+	 * @see [类、类#方法、类#成员]
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	public Map<String, Object> register(String paramStr) {
+		LOG.info("register---------------------------");
+//		ExtendMap<String, String> extendMap = new ExtendMap<>(paramStr);
+//		JSONObject jsonObject = JSONObject.parseObject(paramStr);
+//    	Map<String, Object> map = JSON.parseObject(jsonObject.getString("data"), Map.class);
+		RegisterRequest register = JSON.parseObject(paramStr, RegisterRequest.class);
+        Map<String, Object> result = new HashMap<>();
+        try {
+        	
+        	Map<String, Object> params = new HashMap<String, Object>();
+        	params.put("customerId", register.getCustomerId());
+        	params.put("username", register.getData().getUsername());
+        	params.put("password", register.getData().getPassword());
+        	
+            return userapiservice.register(params, result);
+        } catch (Exception e) {
+        	e.printStackTrace();
+            LOG.error("注册失败！", e);
+            outError(result, "注册失败！系统繁忙...");
+        }
+        return result;
+	}
+	
+    /**
+     * 发送短信
+     *
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/sendMsg", method = RequestMethod.POST)
+    public Map<String, Object> sendMsg(String paramStr) {
+        LOG.info("sendMsg---------------------------");
+        SendMsgRequest sendMsgInput = com.alibaba.fastjson.JSON.parseObject(paramStr, SendMsgRequest.class);
+        Map<String, Object> result = null;
+        try {
+        	SendMsgVO sendMsgVO = sendMsgInput.getData();
+            ExtendMap<String, Object> params = AbstractBaseFactory.createMap(sendMsgVO);
+            params.put("customerId", sendMsgInput.getCustomerId());
+            result = userapiservice.sendMsg(params, request);
+            checkResult(result);
+        } catch (Exception e) {
+        	e.printStackTrace();
+            LOG.error("发送失败！", e);
+            outError(result, "服务繁忙或发送参数不正确...");
+        }
+        return result;
+    }
+    
+    /**
+     * 校验短信验证码
+     *
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/checkMsgCode", method = RequestMethod.POST)
+    public Map<String, Object> checkMsgCode(String paramStr) {
+        LOG.info("checkMsgCode---------------------------");
+        MsgCodeRequest msgCodeRequest = com.alibaba.fastjson.JSON.parseObject(paramStr, MsgCodeRequest.class);
+        Map<String, Object> result = null;
+        try {
+        	MsgCodeVO msgCodeVO = msgCodeRequest.getData();
+        	ExtendMap<String, Object> params = AbstractBaseFactory.createMap(msgCodeVO);
+        	params.put("customerId", msgCodeRequest.getCustomerId());
+            result = userapiservice.checkMsgCode(params, request);
+            checkResult(result);
+        } catch (Exception e) {
+        	e.printStackTrace();
+            LOG.error("校验短信验证码失败！", e);
+            outError(result, "服务繁忙或发送参数不正确...");
+        }
+        return result;
+    }
+    
+    /**
+     * 忘记密码
+     *
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/forgetPassword", method = RequestMethod.POST)
+    public Map<String, Object> forgetPassword(String paramStr) {
+        LOG.info("forgetPassword---------------------------");
+        ForgetPwdRequest forgetPwdRequest = com.alibaba.fastjson.JSON.parseObject(paramStr, ForgetPwdRequest.class);
+        Map<String, Object> result = null;
+        try {
+        	ForgetPwdVO forgetPwdVO = forgetPwdRequest.getData();
+        	ExtendMap<String, Object> params = AbstractBaseFactory.createMap(forgetPwdVO);
+        	params.put("customerId", forgetPwdRequest.getCustomerId());
+            result = userapiservice.forgetPassword(params);
+            checkResult(result);
+        } catch (Exception e) {
+        	e.printStackTrace();
+            LOG.error("修改失败！ ", e);
+            outError(result, "修改密码失败，系统繁忙... ");
+        }
+        return result;
+    }
+
+    /**
+     * 修改登录密码
+     *
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+    public Map<String, Object> updatePassword(String paramStr) {
+        LOG.info("updatePassword---------------------------");
+        UpdatePwdRequest updatePwdRequest = com.alibaba.fastjson.JSON.parseObject(paramStr, UpdatePwdRequest.class);
+        Map<String, Object> result = null;
+        try {
+        	UpdatePwdVO updatePwdVO = updatePwdRequest.getData();
+        	ExtendMap<String, Object> params = AbstractBaseFactory.createMap(updatePwdVO);
+        	params.put("customerId", updatePwdRequest.getCustomerId());
+            result = userapiservice.updatePassword(params);
+            System.out.println(111);
+//            checkResult(result);
+        } catch (Exception e) {
+        	e.printStackTrace();
+            LOG.error("修改失败！", e);
+            outError(result, "修改密码失败，系统繁忙...");
+        }
+        return result;
+    }
+    
+    /**
+     * 修改绑定手机
+     *
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/updateBindPhone", method = RequestMethod.POST)
+    public Map<String, Object> updateBindPhone(String paramStr) {
+        LOG.info("updateBindPhone---------------------------");
+        UpdateBindPhoneRequest updateBindPhoneRequest = com.alibaba.fastjson.JSON.parseObject(paramStr, UpdateBindPhoneRequest.class);
+        Map<String, Object> result = new HashMap<>();
+        try {
+        	UpdateBindPhoneVO updateBindPhoneVO = updateBindPhoneRequest.getData();
+            ExtendMap<String, Object> params = AbstractBaseFactory.createMap(updateBindPhoneVO);
+            params.put("customerId", updateBindPhoneRequest.getCustomerId());
+            result = userapiservice.updateBindPhone(params);
+            checkResult(result);
+        } catch (Exception e) {
+            LOG.error("修改失败！ ", e);
+            outError(result, "修改绑定手机失败，系统繁忙... ");
+        }
+        return result;
+    }
+
+    /**
+     * 修改支付密码
+     *
+     * @param
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/updatePayPassword", method = RequestMethod.POST)
+    public Map<String, Object> updatePayPassword(String paramStr) {
+        LOG.info("updatePassword---------------------------");
+        PayPasswordRequest payPasswordRequest = com.alibaba.fastjson.JSON.parseObject(paramStr, PayPasswordRequest.class);
+        Map<String, Object> result = new HashMap<>();
+        try {
+        	PayPasswordVO payPasswordVO = payPasswordRequest.getData();
+            ExtendMap<String, Object> params = AbstractBaseFactory.createMap(payPasswordVO);
+            params.put("customerId", payPasswordRequest.getCustomerId());
+            result = userapiservice.updatePayPassword(params);
+            checkResult(result);
+        } catch (Exception e) {
+            LOG.error("修改失败！", e);
+            outError(result, "修改密码失败，系统繁忙...");
+        }
+        return result;
+    }
+    
+    /**
+     * 查询用户信息根据open_id
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/queryUserByOpenId", method = RequestMethod.POST)
+    public Map<String, Object> queryUserByOpenId(String paramStr) {
+    	LOG.info("查询用户信息根据open_id................................");
+    	Map<String, Object> result = new HashMap<String, Object>();
+    	Map<String, Object> map = JSON.parseObject(paramStr);
+    	ExtendMap<String, Object> data = JSON.parseObject(map.get("data").toString(), ExtendMap.class);
+//    	JSONObject jsonObject = JSONObject.parseObject(paramStr);
+//    	Map<String, Object> map = JSON.parseObject(jsonObject.getString("data"), Map.class);
+    	try {
+    		ExtendMap<String, Object> params = new ExtendMap<String, Object>(paramStr);
+    		return userapiservice.queryUserByOpenId(data, result);
+    	} catch (Exception e) {
+    		LOG.error("查询用户信息根据open_id失败!", e);
+    		outError(result, "查询用户信息根据open_id失败!");
+    	}
+    	return result;
+    }
+    
+    /**
+     * 用户授权登录之后绑定手机号码
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/bindPhone", method = RequestMethod.POST)
+    public Map<String, Object> bindPhone(String paramStr) {
+    	LOG.info("微信端微信用户授权登录之后绑定手机号码................................");
+    	BindPhoneRequest bindPhoneRequest = JSON.parseObject(paramStr, BindPhoneRequest.class);
+    	Map<String, Object> result = new HashMap<>();
+    	try {
+    		BindPhoneVO bindPhoneVO = bindPhoneRequest.getData();
+    		ExtendMap<String, Object> params = AbstractBaseFactory.createMap(bindPhoneVO);
+    		params.put("customerId", bindPhoneRequest.getCustomerId());
+    		return userapiservice.bindPhone(params, result);
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		LOG.error("微信端微信用户授权登录之后绑定手机号码失败!", e);
+    		outError(result, "微信端微信用户授权登录之后绑定手机号码失败!");
+    	}
+    	return result;
+    }
+    
+    /**
+     * 检查是否需要绑定手机号码
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/checkIsBindPhone", method = RequestMethod.POST)
+    public Map<String, Object> checkIsBindPhone(String paramStr) {
+    	LOG.info("检查是否需要绑定手机号码................................");
+    	CheckBindPhoneRequest checkBindPhoneRequest = JSON.parseObject(paramStr, CheckBindPhoneRequest.class);
+    	Map<String, Object> result = new HashMap<>();
+    	try {
+    		CheckBindPhoneVO checkBindPhoneVO = checkBindPhoneRequest.getData();
+    		ExtendMap<String, Object> params = AbstractBaseFactory.createMap(checkBindPhoneVO);
+    		params.put("customerId", checkBindPhoneRequest.getCustomerId());
+    		return userapiservice.checkIsBindPhone(params, result);
+    	} catch (Exception e) {
+    		LOG.error("检查是否需要绑定手机号码失败!", e);
+    		outError(result, "检查是否需要绑定手机号码失败!");
+    		return result;
+    	}
+    }
+
+}

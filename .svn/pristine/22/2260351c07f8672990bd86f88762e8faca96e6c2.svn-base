@@ -1,0 +1,31 @@
+package com.niuka.agent.dao;
+
+import com.niuka.agent.model.AgentLevel;
+import com.niuka.common.dao.mybatis.Dao;
+import com.niuka.common.model.Pagination;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * 应用持久化接口
+ *
+ * @author hewei
+ */
+public interface AgentLevelDao extends Dao<AgentLevel, Integer> {
+    /**
+     * 查询代理商级别并分类
+     *
+     * @param agentLevelName
+     * @param p
+     * @return
+     */
+    public List<AgentLevel> findPaginationByName(@Param("agentLevelName") String agentLevelName, Pagination<AgentLevel> p);
+
+    /**
+     * 查询所有的代理商级别
+     *
+     * @return
+     */
+    public List<AgentLevel> queryAllAgentLevel();
+}

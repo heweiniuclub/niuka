@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	       http://www.springframework.org/schema/beans/spring-beans.xsd
+	       http://www.springframework.org/schema/context
+		   http://www.springframework.org/schema/context/spring-context.xsd
+		   http://www.springframework.org/schema/aop
+	       http://www.springframework.org/schema/aop/spring-aop.xsd
+		   http://www.springframework.org/schema/tx 
+	       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<context:annotation-config />
+
+	<aop:aspectj-autoproxy />
+
+	<!--文件上传设置 -->
+	<bean id="multipartResolver"
+		  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize">
+			<value>10485760</value><!-- 文件上传最大为10M -->
+		</property>
+		<property name="maxInMemorySize" value="4096"/>
+	</bean>
+
+	<bean class="com.niuka.common.config.ConfigUtils">
+		<property name="fileEncoding" value="UTF-8" />
+		<property name="locations">
+			<list>
+				<!--服务参数配置(Zookeeper、MQ、Redis相关) -->
+				<value>classpath:service.properties</value>
+
+				<!--单点登录服务端参数配置 -->
+				<value>classpath:sso.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!--redis : 用于部署多JVM实例时，RedisSession覆盖HttpSession实现Session共享-->
+	<import resource="classpath:spring-redis.xml" />
+
+	<!-- 引入Dubbo服务相关	 -->
+	<import resource="dubbo-consumer.xml" />
+
+</beans>

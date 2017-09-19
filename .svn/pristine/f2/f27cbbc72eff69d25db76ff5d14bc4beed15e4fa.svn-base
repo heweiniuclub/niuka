@@ -1,0 +1,23 @@
+
+package com.niuka.agent.dao;
+
+
+import com.niuka.agent.model.AgentRechargeLog;
+import com.niuka.common.dao.mybatis.Dao;
+import com.niuka.common.model.Pagination;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+public interface AgentRechargeLogDao extends Dao<AgentRechargeLog, Integer> {
+
+
+    /**
+     * 根据时间查询所有的充值记录
+     *
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public List<AgentRechargeLog> findByTime(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("agentId") Integer agentId,Pagination<AgentRechargeLog> p);
+}

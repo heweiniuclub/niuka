@@ -1,0 +1,196 @@
+package com.niuka.agent.model;
+
+import com.alibaba.fastjson.annotation.JSONField;
+import com.niuka.common.model.PersistentObject;
+
+import java.util.Date;
+
+/**
+ * 代理商实体
+ */
+public class Agent  extends PersistentObject {
+
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    private Date createtime;//创建时间
+
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    private Date modifiedTime;// 修改时间
+
+    private String agentName;//代理商名称
+
+    private String agentContactsName;// 代理商联系人姓名
+
+    private String agentContactsPhone;//联系人电话
+
+    private Double agentTotalAmount;//代理资格缴纳总金额
+
+    private Double agentBalance;//代理商可用余额
+
+    private Double agentFrozenAmount;//代理商冻结金额
+
+    private Double agentUseAmount;//代理商冻结金额
+
+    private Integer provId;//代理商已用金额
+
+    private Integer cityId;//所在省份
+
+    private Integer areaId;//所在地区
+
+    private String agentAddress;//所在地区
+
+    private Boolean isvalid;//详细地址
+
+    private Integer agentLevelId;//是否有效(0有效 1无效)
+
+    private Integer userId;//代理商等级ID
+
+    private Integer roleId ;// 角色id
+
+    private Integer appId; // appId
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    public Integer getAppId() {
+        return appId;
+    }
+
+    public void setAppId(Integer appId) {
+        this.appId = appId;
+    }
+
+
+    public Date getCreatetime() {
+        return createtime;
+    }
+
+    public void setCreatetime(Date createtime) {
+        this.createtime = createtime;
+    }
+
+    public Date getModifiedTime() {
+        return modifiedTime;
+    }
+
+    public void setModifiedTime(Date modifiedTime) {
+        this.modifiedTime = modifiedTime;
+    }
+
+    public String getAgentName() {
+        return agentName;
+    }
+
+    public void setAgentName(String agentName) {
+        this.agentName = agentName == null ? null : agentName.trim();
+    }
+
+    public String getAgentContactsName() {
+        return agentContactsName;
+    }
+
+    public void setAgentContactsName(String agentContactsName) {
+        this.agentContactsName = agentContactsName == null ? null : agentContactsName.trim();
+    }
+
+    public String getAgentContactsPhone() {
+        return agentContactsPhone;
+    }
+
+    public void setAgentContactsPhone(String agentContactsPhone) {
+        this.agentContactsPhone = agentContactsPhone == null ? null : agentContactsPhone.trim();
+    }
+
+    public Double getAgentTotalAmount() {
+        return agentTotalAmount;
+    }
+
+    public void setAgentTotalAmount(Double agentTotalAmount) {
+        this.agentTotalAmount = agentTotalAmount;
+    }
+
+    public Double getAgentBalance() {
+        return agentBalance;
+    }
+
+    public void setAgentBalance(Double agentBalance) {
+        this.agentBalance = agentBalance;
+    }
+
+    public Double getAgentFrozenAmount() {
+        return agentFrozenAmount;
+    }
+
+    public void setAgentFrozenAmount(Double agentFrozenAmount) {
+        this.agentFrozenAmount = agentFrozenAmount;
+    }
+
+    public Double getAgentUseAmount() {
+        return agentUseAmount;
+    }
+
+    public void setAgentUseAmount(Double agentUseAmount) {
+        this.agentUseAmount = agentUseAmount;
+    }
+
+    public Integer getProvId() {
+        return provId;
+    }
+
+    public void setProvId(Integer provId) {
+        this.provId = provId;
+    }
+
+    public Integer getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(Integer cityId) {
+        this.cityId = cityId;
+    }
+
+    public Integer getAreaId() {
+        return areaId;
+    }
+
+    public void setAreaId(Integer areaId) {
+        this.areaId = areaId;
+    }
+
+    public String getAgentAddress() {
+        return agentAddress;
+    }
+
+    public void setAgentAddress(String agentAddress) {
+        this.agentAddress = agentAddress == null ? null : agentAddress.trim();
+    }
+
+    public Boolean getIsvalid() {
+        return isvalid;
+    }
+
+    public void setIsvalid(Boolean isvalid) {
+        this.isvalid = isvalid;
+    }
+
+    public Integer getAgentLevelId() {
+        return agentLevelId;
+    }
+
+    public void setAgentLevelId(Integer agentLevelId) {
+        this.agentLevelId = agentLevelId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+}

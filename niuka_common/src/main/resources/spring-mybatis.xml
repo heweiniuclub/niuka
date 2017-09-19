@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	       http://www.springframework.org/schema/beans/spring-beans.xsd
+	       http://www.springframework.org/schema/tx 
+	       http://www.springframework.org/schema/tx/spring-tx.xsd
+	       http://www.springframework.org/schema/context
+		   http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<import resource="classpath:bytejta-supports-dubbo.xml" />
+
+	<bean id="mysql" class="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource">
+		<property name="url" value="jdbc:mysql://192.168.1.241:3307/o2o" />
+		<property name="user" value="root" />
+		<property name="password" value="111111" />
+	</bean>
+	<bean id="dataSourceWrap" class="org.bytesoft.bytejta.supports.jdbc.XADataSourceImpl">
+		<property name="xaDataSource" ref="mysql" />
+	</bean>
+	<bean id="dataSource" class="org.apache.commons.dbcp.managed.BasicManagedDataSource" >
+		<property name="transactionManager" ref="bytejtaTransactionManager" />
+		<property name="xaDataSourceInstance" ref="dataSourceWrap" />
+		<property name="initialSize" value="20" />
+		<property name="minIdle" value="6" />
+		<property name="logAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="1800" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+		<property name="validationQuery" value="select 'x' " />
+		<property name="validationQueryTimeout" value="1" />
+		<property name="timeBetweenEvictionRunsMillis" value="30000" />
+		<property name="numTestsPerEvictionRun" value="20" />
+	</bean>
+
+	<!--分页插件 -->
+	<bean id="paginationInterceptor" class="com.niuka.common.interceptor.mybatis.PaginationInterceptor"></bean>
+</beans>

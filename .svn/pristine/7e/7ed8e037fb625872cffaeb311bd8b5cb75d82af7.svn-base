@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.niuka.store.dao.CustomerStoreCommodityBatchDao">
+	<resultMap id="queryResultMap" type="com.niuka.store.model.CustomerStoreCommodityBatch">
+		<!-- 流水号 -->
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<!-- 创建时间 -->
+		<result column="createtime" property="createtime" jdbcType="TIMESTAMP"/>
+		<!-- 最后一次更新时间 -->
+		<result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP"/>
+		<!-- 客户产品批次ID -->
+		<result column="customer_commodity_batch_id" property="customerCommodityBatchId" jdbcType="INTEGER"/>
+		<!-- 客户门店库存ID -->
+		<result column="customer_store_stock_id" property="customerStoreStockId" jdbcType="INTEGER"/>
+		<!-- 生产日期 -->
+		<result column="date_of_manufacture" property="dateOfManufacture" jdbcType="TIMESTAMP"/>
+		<!-- 保质期预警值 -->
+		<result column="quality_guarantee_period_warning_value" property="qualityGuaranteePeriodWarningValue" jdbcType="TINYINT"/>
+		<!-- 批次数量 -->
+		<result column="store_batch_num" property="storeBatchNum" jdbcType="INTEGER"/>
+		<!-- 产品单位 -->
+		<result column="unit" property="unit" jdbcType="CHAR"/>
+		<!-- 总金额 -->
+		<result column="total_amount" property="totalAmount" jdbcType="DECIMAL"/>
+		<!-- 产品进货价格 -->
+		<result column="commodity_price" property="commodityPrice" jdbcType="DECIMAL"/>
+		<!-- 门店批次剩余数量 -->
+		<result column="store_surplus_batch_num" property="storeSurplusBatchNum" jdbcType="INTEGER"/>
+		<!-- 门店批次异常数量 -->
+		<result column="store_exception_batch_num" property="storeExceptionBatchNum" jdbcType="INTEGER"/>
+	</resultMap>
+
+	<!-- 保存,保存全部字段 -->
+	<insert id="insert" parameterType="com.niuka.store.model.CustomerStoreCommodityBatch" keyProperty="id" keyColumn="id" useGeneratedKeys="true">INSERT INTO customer_store_commodity_batch ( `createtime` , `modified_time` , `customer_commodity_batch_id` , `customer_store_stock_id` , `date_of_manufacture` , `quality_guarantee_period_warning_value` , `store_batch_num` , `unit` , `total_amount` , `commodity_price` , `store_surplus_batch_num` , `store_exception_batch_num` ) VALUES ( #{createtime,jdbcType=TIMESTAMP} , #{modifiedTime,jdbcType=TIMESTAMP} , #{customerCommodityBatchId,jdbcType=INTEGER} , #{customerStoreStockId,jdbcType=INTEGER} , #{dateOfManufacture,jdbcType=TIMESTAMP} , #{qualityGuaranteePeriodWarningValue,jdbcType=TINYINT} , #{storeBatchNum,jdbcType=INTEGER} , #{unit,jdbcType=CHAR} , #{totalAmount,jdbcType=DECIMAL} , #{commodityPrice,jdbcType=DECIMAL} , #{storeSurplusBatchNum,jdbcType=INTEGER} , #{storeExceptionBatchNum,jdbcType=INTEGER} )</insert>
+	<!-- 根据主键获取单条记录 -->
+	<select id="get" resultMap="queryResultMap" parameterType="com.niuka.store.model.CustomerStoreCommodityBatch">SELECT t.id , t.createtime , t.modified_time , t.customer_commodity_batch_id , t.customer_store_stock_id , t.date_of_manufacture , t.quality_guarantee_period_warning_value , t.store_batch_num , t.unit , t.total_amount , t.commodity_price , t.store_surplus_batch_num , t.store_exception_batch_num FROM customer_store_commodity_batch t WHERE id = #{id,jdbcType=INTEGER}</select>
+	<!-- 更新,更新全部字段 -->
+	<update id="update" parameterType="com.niuka.store.model.CustomerStoreCommodityBatch">UPDATE customer_store_commodity_batch
+		<set>createtime=#{createtime,jdbcType=TIMESTAMP}, modified_time=#{modifiedTime,jdbcType=TIMESTAMP}, customer_commodity_batch_id=#{customerCommodityBatchId,jdbcType=INTEGER}, customer_store_stock_id=#{customerStoreStockId,jdbcType=INTEGER}, date_of_manufacture=#{dateOfManufacture,jdbcType=TIMESTAMP}, quality_guarantee_period_warning_value=#{qualityGuaranteePeriodWarningValue,jdbcType=TINYINT}, store_batch_num=#{storeBatchNum,jdbcType=INTEGER}, unit=#{unit,jdbcType=CHAR}, total_amount=#{totalAmount,jdbcType=DECIMAL}, commodity_price=#{commodityPrice,jdbcType=DECIMAL}, store_surplus_batch_num=#{storeSurplusBatchNum,jdbcType=INTEGER}, store_exception_batch_num=#{storeExceptionBatchNum,jdbcType=INTEGER},</set> WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+	<delete id="deleteById" parameterType="list" statementType="PREPARED">DELETE FROM customer_store_commodity_batch 
+		<choose>
+			<when test="list == null or list.size() == 0">WHERE 1 != 1</when>
+			<when test="list.size() == 1">WHERE `id` = 
+				<foreach collection="list" item="id">#{id}</foreach> 
+			</when>
+			<otherwise>WHERE `id` in 
+				<foreach collection="list" item="id" open="(" separator="," close=")">#{id}</foreach>
+			</otherwise>
+		</choose> 
+	</delete>
+</mapper>

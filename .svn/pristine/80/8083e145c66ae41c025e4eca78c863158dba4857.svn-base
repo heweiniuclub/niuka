@@ -1,0 +1,100 @@
+package com.niuka.agent.service;
+
+import com.niuka.agent.dao.AgentDao;
+import com.niuka.agent.model.Agent;
+import com.niuka.agent.rpc.AgentService;
+import com.niuka.common.exception.DaoException;
+import com.niuka.common.model.Pagination;
+import com.niuka.common.service.mybatis.impl.ServiceImpl;
+import com.niuka.common.util.MD5Util;
+import com.niuka.user.model.User;
+import com.niuka.user.model.UserRole;
+import com.niuka.user.rpc.UserJtaService;
+import com.niuka.user.rpc.UserRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
+
+@Service("agentservice")
+public class AgentServiceImpl extends ServiceImpl<AgentDao, Agent, Integer>  implements AgentService {
+
+
+	@Resource
+	private UserJtaService userJtaService;
+
+
+
+	@Autowired
+	public void setDao(AgentDao dao) {
+		this.dao = dao;
+	}
+
+	public void save(Agent t) {
+		super.save(t);
+	}
+
+
+	public Pagination<Agent> findPaginationByParam(String agentName ,String agentContactsPhone,String agentContactsName, Integer agentLevelId,Pagination<Agent> p) {
+		dao.findPaginationByParam(agentName,agentContactsPhone,agentContactsName,agentLevelId, p);
+		return p;
+	}
+
+	/**
+	 * 保存数据 需要事务
+	 *
+	 * @param agent
+	 */
+	@Transactional(rollbackFor=DaoException.class)
+	public void saveAgent(Agent agent) throws DaoException {
+		if (agent.getId()== null) {
+			agent.setCreatetime(new Date());
+			User user = new User();
+			user.setAccount(agent.getAgentContactsPhone());
+			user.setPassword(MD5Util.string2MD5("111111"));
+
+			// 用户类型为代理商
+			user.setUserType(1);
+			user.setCreateTime(new Date());
+			UserRole userRole = new UserRole();
+			userRole.setRoleId(agent.getRoleId());
+			userRole.setAppId(agent.getAppId());
+			int userId = userJtaService.addUserRole(user,userRole);
+			if(userId!=1){
+				throw new DaoException();
+			}
+			agent.setUserId(userId);
+			int insert = dao.insert(agent);
+			if(insert!=1){
+				throw new DaoException("数据库异常");
+			}
+		} else {
+			agent = dao.get(agent.getId());
+			agent.setModifiedTime(new Date());
+			dao.update(agent);
+		}
+
+	}
+
+	@Transactional(rollbackFor = DaoException.class)
+	public void deleteUserAndRole(List<Integer> idList,int appId) {
+
+		//删除用户角色关系
+		if(null!=idList&&idList.size()>0){
+			for (Integer agentId: idList) {
+				Agent agent = dao.get(agentId);
+
+				userJtaService.deleteUserAndRole(agent.getUserId(),appId);
+
+			}
+		}
+
+		// 删除代理商
+		verifyRows(dao.deleteById(idList), idList.size(), "代理商信息数据库删除失败");
+	}
+
+
+}

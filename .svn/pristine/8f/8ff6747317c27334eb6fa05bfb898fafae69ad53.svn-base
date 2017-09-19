@@ -1,0 +1,147 @@
+package com.niuka.store.model;
+
+import com.alibaba.fastjson.annotation.JSONField;
+import com.niuka.common.model.PersistentObject;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+/**
+  
+*/
+public class CustomerStoreStockLog extends PersistentObject {
+
+	// 创建时间
+	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+	private Date createtime;
+	// 最后一次更新时间
+	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+	private Date modifiedTime;
+	// 客户ID
+	private Integer customerId;
+	// 操作人ID
+	private Integer customerStaffId;
+	// 出入库数量
+	private Integer stockCount;
+	// 出入库时价格
+	private BigDecimal primeCosts;
+	// 出入库单号
+	private String stockNumber;
+	// 库存记录类型(0入库 1出库)
+	private Byte stockType;
+	// 总金额
+	private BigDecimal totalAmount;
+	// 产品单位
+	private String unit;
+	// 客户库存ID
+	private Integer customerStockId;
+	// 产品库ID
+	private Integer commodityId;
+	// 客户产品批次ID
+	private Integer customerCommodityBatchId;
+
+	public void setCreatetime(Date createtime){
+		this.createtime = createtime;
+	}
+
+	public Date getCreatetime(){
+		return this.createtime;
+	}
+
+	public void setModifiedTime(Date modifiedTime){
+		this.modifiedTime = modifiedTime;
+	}
+
+	public Date getModifiedTime(){
+		return this.modifiedTime;
+	}
+
+	public void setCustomerId(Integer customerId){
+		this.customerId = customerId;
+	}
+
+	public Integer getCustomerId(){
+		return this.customerId;
+	}
+
+	public void setCustomerStaffId(Integer customerStaffId){
+		this.customerStaffId = customerStaffId;
+	}
+
+	public Integer getCustomerStaffId(){
+		return this.customerStaffId;
+	}
+
+	public void setStockCount(Integer stockCount){
+		this.stockCount = stockCount;
+	}
+
+	public Integer getStockCount(){
+		return this.stockCount;
+	}
+
+	public void setPrimeCosts(BigDecimal primeCosts){
+		this.primeCosts = primeCosts;
+	}
+
+	public BigDecimal getPrimeCosts(){
+		return this.primeCosts;
+	}
+
+	public void setStockNumber(String stockNumber){
+		this.stockNumber = stockNumber;
+	}
+
+	public String getStockNumber(){
+		return this.stockNumber;
+	}
+
+	public void setStockType(Byte stockType){
+		this.stockType = stockType;
+	}
+
+	public Byte getStockType(){
+		return this.stockType;
+	}
+
+	public void setTotalAmount(BigDecimal totalAmount){
+		this.totalAmount = totalAmount;
+	}
+
+	public BigDecimal getTotalAmount(){
+		return this.totalAmount;
+	}
+
+	public void setUnit(String unit){
+		this.unit = unit;
+	}
+
+	public String getUnit(){
+		return this.unit;
+	}
+
+	public void setCustomerStockId(Integer customerStockId){
+		this.customerStockId = customerStockId;
+	}
+
+	public Integer getCustomerStockId(){
+		return this.customerStockId;
+	}
+
+	public void setCommodityId(Integer commodityId){
+		this.commodityId = commodityId;
+	}
+
+	public Integer getCommodityId(){
+		return this.commodityId;
+	}
+
+	public void setCustomerCommodityBatchId(Integer customerCommodityBatchId){
+		this.customerCommodityBatchId = customerCommodityBatchId;
+	}
+
+	public Integer getCustomerCommodityBatchId(){
+		return this.customerCommodityBatchId;
+	}
+
+}

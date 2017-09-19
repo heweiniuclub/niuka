@@ -1,0 +1,224 @@
+package com.niuka.customer.model;
+
+import java.util.Date;
+
+import com.alibaba.fastjson.annotation.JSONField;
+import com.niuka.common.model.PersistentObject;
+
+/** 
+ * @author yhcui E-mail:ychui@yahoo.cn 
+ * @version 创建时间：2017年9月13日 下午9:02:15 
+ * 类说明 
+ */
+
+public class Customer extends PersistentObject {
+
+	private static final long serialVersionUID = 7503956665813850555L;
+
+	// 创建时间
+	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+		private Date createtime;
+		// 最后一次更新时间
+		@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+		private Date modifiedTime;
+		// 客户模式(0 O2O模式)
+		private Byte customerMode;
+		// 客户类型(0单店 1多店 2线下)
+		private Byte customerType;
+		// 客户联系人
+		private String customerName;
+		// 客户电话
+		private String customerPhone;
+		// 客户详细地址
+		private String customerAddress;
+		// 省份
+		private Integer provId;
+		// 城市
+		private Integer cityId;
+		// 区域
+		private Integer areaId;
+		// 入网时间
+		@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+		private Date openTime;
+		// 到期时间
+		@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+		private Date endTime;
+		// 是否有效（0有效 1无效）
+		private Byte isvalid;
+		// 审核状态（0未审核 1同意 2拒绝）
+		private Byte status;
+		// 审核备注
+		private String refuseReason;
+		// 审核时间
+		@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+		private Date refuseTime;
+		// 所属代理商ID或者直销人员ID
+		private Integer agentId;
+		// 用户ID
+		private Integer userId;
+		// 门店数量
+		private Integer storeNum;
+		// 账号来源(0代理商 1直销人员)
+		private Byte accountSource;
+
+		public void setCreatetime(Date createtime){
+			this.createtime = createtime;
+		}
+
+		public Date getCreatetime(){
+			return this.createtime;
+		}
+
+		public void setModifiedTime(Date modifiedTime){
+			this.modifiedTime = modifiedTime;
+		}
+
+		public Date getModifiedTime(){
+			return this.modifiedTime;
+		}
+
+		public void setCustomerMode(Byte customerMode){
+			this.customerMode = customerMode;
+		}
+
+		public Byte getCustomerMode(){
+			return this.customerMode;
+		}
+
+		public void setCustomerType(Byte customerType){
+			this.customerType = customerType;
+		}
+
+		public Byte getCustomerType(){
+			return this.customerType;
+		}
+
+		public void setCustomerName(String customerName){
+			this.customerName = customerName;
+		}
+
+		public String getCustomerName(){
+			return this.customerName;
+		}
+
+		public void setCustomerPhone(String customerPhone){
+			this.customerPhone = customerPhone;
+		}
+
+		public String getCustomerPhone(){
+			return this.customerPhone;
+		}
+
+		public void setCustomerAddress(String customerAddress){
+			this.customerAddress = customerAddress;
+		}
+
+		public String getCustomerAddress(){
+			return this.customerAddress;
+		}
+
+		public void setProvId(Integer provId){
+			this.provId = provId;
+		}
+
+		public Integer getProvId(){
+			return this.provId;
+		}
+
+		public void setCityId(Integer cityId){
+			this.cityId = cityId;
+		}
+
+		public Integer getCityId(){
+			return this.cityId;
+		}
+
+		public void setAreaId(Integer areaId){
+			this.areaId = areaId;
+		}
+
+		public Integer getAreaId(){
+			return this.areaId;
+		}
+
+		public void setOpenTime(Date openTime){
+			this.openTime = openTime;
+		}
+
+		public Date getOpenTime(){
+			return this.openTime;
+		}
+
+		public void setEndTime(Date endTime){
+			this.endTime = endTime;
+		}
+
+		public Date getEndTime(){
+			return this.endTime;
+		}
+
+		public void setIsvalid(Byte isvalid){
+			this.isvalid = isvalid;
+		}
+
+		public Byte getIsvalid(){
+			return this.isvalid;
+		}
+
+		public void setStatus(Byte status){
+			this.status = status;
+		}
+
+		public Byte getStatus(){
+			return this.status;
+		}
+
+		public void setRefuseReason(String refuseReason){
+			this.refuseReason = refuseReason;
+		}
+
+		public String getRefuseReason(){
+			return this.refuseReason;
+		}
+
+		public void setRefuseTime(Date refuseTime){
+			this.refuseTime = refuseTime;
+		}
+
+		public Date getRefuseTime(){
+			return this.refuseTime;
+		}
+
+		public void setAgentId(Integer agentId){
+			this.agentId = agentId;
+		}
+
+		public Integer getAgentId(){
+			return this.agentId;
+		}
+
+		public void setUserId(Integer userId){
+			this.userId = userId;
+		}
+
+		public Integer getUserId(){
+			return this.userId;
+		}
+
+		public void setStoreNum(Integer storeNum){
+			this.storeNum = storeNum;
+		}
+
+		public Integer getStoreNum(){
+			return this.storeNum;
+		}
+
+		public void setAccountSource(Byte accountSource){
+			this.accountSource = accountSource;
+		}
+
+		public Byte getAccountSource(){
+			return this.accountSource;
+		}
+	
+}

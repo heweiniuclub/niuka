@@ -1,0 +1,32 @@
+package com.niuka.systemset.service;
+
+import com.niuka.common.service.mybatis.impl.ServiceImpl;
+import com.niuka.systemset.dao.CityDao;
+import com.niuka.systemset.dao.ProvinceDao;
+import com.niuka.systemset.model.City;
+import com.niuka.systemset.rpc.CityService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("cityservice")
+public class CityServiceImpl extends ServiceImpl<CityDao, City, Integer> implements CityService {
+
+
+	@Autowired
+	public void setDao(CityDao dao) {
+		this.dao = dao;
+	}
+	/**
+	 * 根据省份id查询所有的城市
+	 *
+	 * @return
+	 */
+	@Override
+	public List<City> queryCityByProvince(int provinceId) {
+		return dao.queryCityByProvince(provinceId);
+	}
+
+
+}

@@ -1,0 +1,135 @@
+<%@ page language="java" pageEncoding="utf-8"%>
+
+<jsp:include page="../common/common.jsp">
+	<jsp:param name="title" value="代理商级别"/>
+</jsp:include>
+
+<div class="page-header">
+	<h1>
+		${empty agentLevel.id ? '添加' : '修改'}代理商级别
+	</h1>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<form id="_editForm" class="form-horizontal" role="form">
+			<input type="hidden" name="id" value="${agentLevel.id}">
+			
+			<div class="form-group">
+				<label for="_agentLevelName" class="col-sm-3 control-label no-padding-right"><span class="form-star">*</span>代理商级别名称</label>
+
+				<div class="col-sm-9">
+					<div class="clearfix help-validate">
+						<input id="_agentLevelName" name="agentLevelName" type="text" value="${agentLevel.agentLevelName}" class="form-data col-xs-10 col-sm-5" placeholder="代理商级别名称"
+							required="true" maxlength="64"/>
+					</div>
+				</div>
+				
+			</div>
+			
+			<div class="form-group">
+				<label for="_agentLevelDiscount" class="col-sm-3 control-label no-padding-right"><span class="form-star">*</span>代理商折扣</label>
+
+				<div class="col-sm-9">
+					<div class="clearfix help-validate">
+						<input id="_agentLevelDiscount" name="agentLevelDiscount" type="text" value="${agentLevel.agentLevelDiscount}" class="form-data col-xs-10 col-sm-5" placeholder="代理商折扣" maxlength="64"/>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="_amount" class="col-sm-3 control-label no-padding-right"><span class="form-star">*</span>加盟费用</label>
+
+				<div class="col-sm-9">
+					<div class="clearfix help-validate">
+						<input id="_amount" name="amount" type="text" value="${agentLevel.amount}" class="form-data col-xs-10 col-sm-5" placeholder="代理商折扣" maxlength="64"/>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="_remarks" class="col-sm-3 control-label no-padding-right"><span class="form-star">*</span>备注</label>
+
+				<div class="col-sm-9">
+					<div class="clearfix help-validate">
+						<input id="_remarks" name="remarks" type="text" value="${agentLevel.remarks}" class="form-data col-xs-10 col-sm-5" placeholder="备注" maxlength="64"/>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="form-group">
+				<label for="_sort" class="col-sm-3 control-label no-padding-right"><span class="form-star">*</span>排序</label>
+
+				<div class="col-sm-9">
+					<div class="clearfix help-validate">
+						<input id="_sort" name="sort" type="text" value="${agentLevel.sort}" class="form-data col-xs-10 col-sm-5" placeholder="排序"
+							required="true" vtype="integer" min="1" max="9999"/>
+					</div>
+				</div>
+				
+			</div>
+			
+
+			<div class="clearfix form-actions">
+				<div class="col-md-offset-3 col-md-9">
+					<button id="_submit" type="button" class="btn btn-info" data-loading-text="正在提交..." permission="/agent/level/save">
+						<i class="ace-icon fa fa-check bigger-110"></i>
+						提交
+					</button>
+
+					&nbsp; &nbsp; &nbsp;
+					<button id="_cancle" class="btn" type="reset">
+						<i class="ace-icon fa  fa-times bigger-110"></i>
+						取消
+					</button>
+				</div>
+			</div>
+		</form>
+
+	</div>
+</div>
+
+<script type="text/javascript">
+	$('.page-content-area').ace_ajax('loadScripts', scripts, function() {
+		jQuery(function($) {
+			//焦点
+			$("#_name").focus();
+			
+			// 提交
+			$("#_submit").click(function(){
+				if($('#_editForm').validate()){
+					var btn = $(this);
+					btn.button('loading');
+					$.post("${_path}/agent/level/save", $.formJson('_editForm'),function(d) {
+						if(d){
+							btn.button('reset');
+							if(d.code == 1){
+								$.aceRedirect("${_path}//agent/level/","/index/");
+							}
+							else {
+								$.gritter.add({text: d.message});
+							}
+						}
+			        },'json');
+				}
+			});
+			
+			// 取消
+			$("#_cancle").click(function(){
+				$.aceRedirect("${_path}/agent/level","/index/");
+			});
+			
+			// 回车绑定
+			$(".form-data").bind('keypress',function(event){
+                if(event.keyCode == "13"){
+                	event.preventDefault();
+                	$("#_submit").click();
+                }
+            });
+            
+            // 权限处理
+			$.permission();
+		});
+	});
+</script>

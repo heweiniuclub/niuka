@@ -1,0 +1,8 @@
+package com.niuka.store.rpc;
+
+import com.niuka.common.service.mybatis.Service;
+import com.niuka.store.model.CustomerStoreCommodityBatch;
+
+public interface  CustomerStoreCommodityBatchService extends Service<CustomerStoreCommodityBatch, Integer> {
+	
+}

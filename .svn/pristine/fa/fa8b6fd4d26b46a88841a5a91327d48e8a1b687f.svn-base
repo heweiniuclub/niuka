@@ -1,0 +1,41 @@
+package com.niuka.systemset.model;
+
+import com.niuka.common.model.PersistentObject;
+
+/**
+  (城市)
+*/
+public class City extends PersistentObject {
+
+	// 
+	private Integer provinceId;
+	// 
+	private String cityName;
+	// 
+	private String zipCode;
+
+	public void setProvinceId(Integer provinceId){
+		this.provinceId = provinceId;
+	}
+
+	public Integer getProvinceId(){
+		return this.provinceId;
+	}
+
+	public void setCityName(String cityName){
+		this.cityName = cityName;
+	}
+
+	public String getCityName(){
+		return this.cityName;
+	}
+
+	public void setZipCode(String zipCode){
+		this.zipCode = zipCode;
+	}
+
+	public String getZipCode(){
+		return this.zipCode;
+	}
+
+}

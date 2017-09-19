@@ -1,0 +1,16 @@
+package com.niuka.systemset.rpc;
+
+import com.niuka.common.service.mybatis.Service;
+import com.niuka.systemset.model.Province;
+
+import java.util.List;
+
+public interface  ProvinceService extends Service<Province, Integer> {
+
+    /**
+     * 查询所有的省份信息
+     * @return
+     */
+    public List<Province> queryAllProvince();
+
+}

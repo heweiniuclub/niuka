@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="niuka_customer_provider:war">
+    <output-path>$PROJECT_DIR$/module/niuka_customer_module/niuka_customer_provider/target</output-path>
+    <root id="archive" name="/niuka_customer_provider.war">
+      <element id="artifact" artifact-name="niuka_customer_provider:war exploded" />
+    </root>
+  </artifact>
+</component>

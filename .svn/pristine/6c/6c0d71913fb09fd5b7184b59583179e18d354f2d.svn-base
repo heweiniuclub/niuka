@@ -1,0 +1,99 @@
+package com.niuka.store.model;
+
+import com.alibaba.fastjson.annotation.JSONField;
+import com.niuka.common.model.PersistentObject;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+/**
+  
+*/
+public class CustomerStorePurchaseDetail extends PersistentObject {
+
+	// 创建时间
+	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+	private Date createtime;
+	// 最后一次更新时间
+	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+	private Date modifiedTime;
+	// 客户产品ID
+	private Integer customerCommodityId;
+	// 门店采购记录ID
+	private Integer customerStorePurchaseLogId;
+	// 门店采购编号
+	private Integer purchaseNo;
+	// 客户库存ID
+	private Integer customerStock;
+	// 采购数量
+	private Integer purchaseNum;
+	// 采购总金额
+	private BigDecimal totalAmount;
+
+
+
+	public void setCreatetime(Date createtime){
+		this.createtime = createtime;
+	}
+
+	public Date getCreatetime(){
+		return this.createtime;
+	}
+
+	public void setModifiedTime(Date modifiedTime){
+		this.modifiedTime = modifiedTime;
+	}
+
+	public Date getModifiedTime(){
+		return this.modifiedTime;
+	}
+
+	public void setCustomerCommodityId(Integer customerCommodityId){
+		this.customerCommodityId = customerCommodityId;
+	}
+
+	public Integer getCustomerCommodityId(){
+		return this.customerCommodityId;
+	}
+
+	public void setCustomerStorePurchaseLogId(Integer customerStorePurchaseLogId){
+		this.customerStorePurchaseLogId = customerStorePurchaseLogId;
+	}
+
+	public Integer getCustomerStorePurchaseLogId(){
+		return this.customerStorePurchaseLogId;
+	}
+
+	public void setPurchaseNo(Integer purchaseNo){
+		this.purchaseNo = purchaseNo;
+	}
+
+	public Integer getPurchaseNo(){
+		return this.purchaseNo;
+	}
+
+	public void setCustomerStock(Integer customerStock){
+		this.customerStock = customerStock;
+	}
+
+	public Integer getCustomerStock(){
+		return this.customerStock;
+	}
+
+	public void setPurchaseNum(Integer purchaseNum){
+		this.purchaseNum = purchaseNum;
+	}
+
+	public Integer getPurchaseNum(){
+		return this.purchaseNum;
+	}
+
+	public void setTotalAmount(BigDecimal totalAmount){
+		this.totalAmount = totalAmount;
+	}
+
+	public BigDecimal getTotalAmount(){
+		return this.totalAmount;
+	}
+
+}

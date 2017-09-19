@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--      
+	查询
+-->
+<mapper namespace="com.niuka.systemset.dao.ProvinceDao">
+	<resultMap id="queryResultMap" type="com.niuka.systemset.model.Province">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="province_name" property="provinceName" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<!-- 根据条件查询记录 -->
+	<select id="queryAllProvince" parameterType="com.niuka.systemset.model.Province" resultMap="queryResultMap">
+		SELECT t.id , t.province_name FROM province t ORDER BY t.id desc
+	</select>
+
+</mapper>

@@ -1,0 +1,20 @@
+
+package com.niuka.systemset.dao;
+
+
+import com.niuka.common.dao.mybatis.Dao;
+import com.niuka.systemset.model.City;
+
+import java.util.List;
+
+/**
+ * 城市dao
+ */
+public interface CityDao extends Dao<City, Integer> {
+
+    /**
+     * 根据省份id查询所有的城市
+     * @return
+     */
+    public List<City> queryCityByProvince(int provinceId);
+}

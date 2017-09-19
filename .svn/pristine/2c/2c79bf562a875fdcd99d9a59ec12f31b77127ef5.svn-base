@@ -1,0 +1,29 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	   http://code.alibabatech.com/schema/dubbo
+	   http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->
+	<dubbo:application name="niuka_api_service"/>
+
+	<!-- 使用zookeeper注册中心暴露服务地址 -->
+	<!-- 注册中心地址 -->
+	<dubbo:registry protocol="zookeeper" address="${zookeeper.address}" />
+
+	<dubbo:protocol host="${consumer.host}" />
+	<dubbo:consumer timeout="50000" />
+	
+	<!-- 用户服务 -->
+	<dubbo:reference interface="com.niuka.user.rpc.api.UserApiService" id="userapiservice" check= "false" />
+	<dubbo:reference interface="com.niuka.user.rpc.api.PersonalMemberApiService" id="memberapiservice" check= "false" />
+	<dubbo:reference interface="com.niuka.user.rpc.api.OauthLoginApiService" id="oauthLoginapiservice" check= "false" />
+	
+	<dubbo:reference interface="com.niuka.customer.rpc.api.CustomerApiService" id="customerapiservice" check= "false"/>
+	<dubbo:reference interface="com.niuka.customer.rpc.api.CustomerUserApiService" id="customerUserapiservice" check= "false" filter="transaction" loadbalance="transaction" cluster="failfast" retries="0" group="org.bytesoft.bytejta" />
+
+
+</beans>

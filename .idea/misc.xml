@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/module/niuka_agent_module/niuka_agent_provider" />
+    <file type="web" url="file://$PROJECT_DIR$/module/niuka_customer_module/niuka_customer_provider" />
+    <file type="web" url="file://$PROJECT_DIR$/module/niuka_inventory_module/niuka_inventory_provider" />
+    <file type="web" url="file://$PROJECT_DIR$/module/niuka_product_module/niuka_product_provider" />
+    <file type="web" url="file://$PROJECT_DIR$/module/niuka_purchasing_module/niuka_purchasing_provider" />
+    <file type="web" url="file://$PROJECT_DIR$/module/niuka_store_module/niuka_store_provider" />
+    <file type="web" url="file://$PROJECT_DIR$/module/niuka_systemset_module/niuka_systemset_provider" />
+    <file type="web" url="file://$PROJECT_DIR$/module/niuka_user_module/niuka_user_provider" />
+    <file type="web" url="file://$PROJECT_DIR$/niuka-static" />
+    <file type="web" url="file://$PROJECT_DIR$/niuka_api_server" />
+    <file type="web" url="file://$PROJECT_DIR$/niuka_o2o_web" />
+    <file type="web" url="file://$PROJECT_DIR$/niuka_sso_server" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
+  <component name="SvnBranchConfigurationManager">
+    <option name="myConfigurationMap">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="mySupportsUserInfoFilter" value="true" />
+  </component>
+</project>

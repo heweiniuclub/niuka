@@ -1,0 +1,10 @@
+
+package com.niuka.store.dao;
+
+
+import com.niuka.common.dao.mybatis.Dao;
+import com.niuka.store.model.CustomerStorePurchaseLog;
+
+public interface CustomerStorePurchaseLogDao extends Dao<CustomerStorePurchaseLog, Integer> {
+
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.niuka.store.dao.CustomerStoreDao">
+	<resultMap id="queryResultMap" type="customerstore.model.CustomerStore">
+		<!-- 流水号 -->
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<!-- 创建时间 -->
+		<result column="createtime" property="createtime" jdbcType="TIMESTAMP"/>
+		<!-- 最后一次更新时间 -->
+		<result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP"/>
+		<!-- 门店编号 -->
+		<result column="store_no" property="storeNo" jdbcType="VARCHAR"/>
+		<!-- 门店名称 -->
+		<result column="store_name" property="storeName" jdbcType="VARCHAR"/>
+		<!-- 门店地址 -->
+		<result column="store_address" property="storeAddress" jdbcType="VARCHAR"/>
+		<!-- 门店电话 -->
+		<result column="store_phone" property="storePhone" jdbcType="VARCHAR"/>
+		<!-- 省份 -->
+		<result column="prov_id" property="provId" jdbcType="INTEGER"/>
+		<!-- 城市 -->
+		<result column="city_id" property="cityId" jdbcType="INTEGER"/>
+		<!-- 区域 -->
+		<result column="area_id" property="areaId" jdbcType="INTEGER"/>
+		<!-- 客户ID -->
+		<result column="customer_id" property="customerId" jdbcType="INTEGER"/>
+		<!-- 客户类型 -->
+		<result column="customer_type" property="customerType" jdbcType="TINYINT"/>
+		<!-- 营业时间 -->
+		<result column="business_hours" property="businessHours" jdbcType="VARCHAR"/>
+		<!-- 是否有效(0有效 1无效) -->
+		<result column="isvalid" property="isvalid" jdbcType="TINYINT"/>
+	</resultMap>
+
+	<!-- 保存,保存全部字段 -->
+	<insert id="insert" parameterType="com.niuka.store.model.CustomerStore" keyProperty="id" keyColumn="id" useGeneratedKeys="true">INSERT INTO customer_store ( `createtime` , `modified_time` , `store_no` , `store_name` , `store_address` , `store_phone` , `prov_id` , `city_id` , `area_id` , `customer_id` , `customer_type` , `business_hours` , `isvalid` ) VALUES ( #{createtime,jdbcType=TIMESTAMP} , #{modifiedTime,jdbcType=TIMESTAMP} , #{storeNo,jdbcType=VARCHAR} , #{storeName,jdbcType=VARCHAR} , #{storeAddress,jdbcType=VARCHAR} , #{storePhone,jdbcType=VARCHAR} , #{provId,jdbcType=INTEGER} , #{cityId,jdbcType=INTEGER} , #{areaId,jdbcType=INTEGER} , #{customerId,jdbcType=INTEGER} , #{customerType,jdbcType=TINYINT} , #{businessHours,jdbcType=VARCHAR} , #{isvalid,jdbcType=TINYINT} )</insert>
+	<!-- 根据主键获取单条记录 -->
+	<select id="get" resultMap="queryResultMap" parameterType="com.niuka.store.model.CustomerStore">SELECT t.id , t.createtime , t.modified_time , t.store_no , t.store_name , t.store_address , t.store_phone , t.prov_id , t.city_id , t.area_id , t.customer_id , t.customer_type , t.business_hours , t.isvalid FROM customer_store t WHERE id = #{id,jdbcType=INTEGER}</select>
+	<!-- 更新,更新全部字段 -->
+	<update id="update" parameterType="com.niuka.store.model.CustomerStore">UPDATE customer_store
+		<set>createtime=#{createtime,jdbcType=TIMESTAMP}, modified_time=#{modifiedTime,jdbcType=TIMESTAMP}, store_name=#{storeName,jdbcType=VARCHAR}, store_address=#{storeAddress,jdbcType=VARCHAR}, store_phone=#{storePhone,jdbcType=VARCHAR}, prov_id=#{provId,jdbcType=INTEGER}, city_id=#{cityId,jdbcType=INTEGER}, area_id=#{areaId,jdbcType=INTEGER}, customer_id=#{customerId,jdbcType=INTEGER}, customer_type=#{customerType,jdbcType=TINYINT}, business_hours=#{businessHours,jdbcType=VARCHAR}, isvalid=#{isvalid,jdbcType=TINYINT},</set> WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+	<delete id="deleteById" parameterType="list" statementType="PREPARED">DELETE FROM customer_store 
+		<choose>
+			<when test="list == null or list.size() == 0">WHERE 1 != 1</when>
+			<when test="list.size() == 1">WHERE `id` = 
+				<foreach collection="list" item="id">#{id}</foreach> 
+			</when>
+			<otherwise>WHERE `id` in 
+				<foreach collection="list" item="id" open="(" separator="," close=")">#{id}</foreach>
+			</otherwise>
+		</choose> 
+	</delete>
+</mapper>

@@ -1,0 +1,112 @@
+package com.niuka.agent.model;
+
+import com.alibaba.fastjson.annotation.JSONField;
+import com.niuka.common.model.PersistentObject;
+
+import java.util.Date;
+
+/**
+ * 代理商级别
+ * 
+ * @author hewei
+ */
+public class AgentLevel extends PersistentObject {
+
+	private static final long serialVersionUID = 7902814112969375973L;
+	
+	/** 代理商级别名称 */
+
+	private String agentLevelName;
+
+	/** 代理商折扣  */
+	private Double agentLevelDiscount;
+
+	/** 代理商需缴纳金额  */
+	private Double amount;
+
+	/** 排序 */
+	private Integer sort = Integer.valueOf(1);
+
+	/** 创建时间 */
+	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+	private Date createtime;
+
+	@JSONField(format = "yyyy-MM-dd HH:mm:ss")
+	private Date modifiedTime;
+
+	/**
+	 * 备注
+	 */
+	private String remarks;
+
+	/** 是否启用 */
+	private Boolean isEnable = Boolean.valueOf(true);
+	
+	public AgentLevel(){
+	}
+
+
+	public String getAgentLevelName() {
+		return agentLevelName;
+	}
+
+	public void setAgentLevelName(String agentLevelName) {
+		this.agentLevelName = agentLevelName;
+	}
+
+	public Double getAgentLevelDiscount() {
+		return agentLevelDiscount;
+	}
+
+	public void setAgentLevelDiscount(Double agentLevelDiscount) {
+		this.agentLevelDiscount = agentLevelDiscount;
+	}
+
+	public Double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
+
+	public Date getCreatetime() {
+		return createtime;
+	}
+
+	public void setCreatetime(Date createtime) {
+		this.createtime = createtime;
+	}
+
+	public Date getModifiedTime() {
+		return modifiedTime;
+	}
+
+	public void setModifiedTime(Date modifiedTime) {
+		this.modifiedTime = modifiedTime;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public Boolean getEnable() {
+		return isEnable;
+	}
+
+	public void setEnable(Boolean enable) {
+		isEnable = enable;
+	}
+}

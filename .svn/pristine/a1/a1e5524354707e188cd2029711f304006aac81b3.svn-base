@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.niuka.store.dao.CustomerStoreCommodityBatchDetailDao">
+	<resultMap id="queryResultMap" type="com.niuka.store.model.CustomerStoreCommodityBatchDetail">
+		<!-- 流水号 -->
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<!-- 创建时间 -->
+		<result column="createtime" property="createtime" jdbcType="TIMESTAMP"/>
+		<!-- 最后一次更新时间 -->
+		<result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP"/>
+		<!-- 客户门店采购详情ID -->
+		<result column="customer_store_purchase_detail_id" property="customerStorePurchaseDetailId" jdbcType="INTEGER"/>
+		<!-- 客户产品批次ID -->
+		<result column="customer_commodity_batch_id" property="customerCommodityBatchId" jdbcType="INTEGER"/>
+		<!-- 采购数量 -->
+		<result column="batch_num" property="batchNum" jdbcType="INTEGER"/>
+		<!-- 产品单位 -->
+		<result column="unit" property="unit" jdbcType="CHAR"/>
+		<!-- 总金额 -->
+		<result column="total_amount" property="totalAmount" jdbcType="DECIMAL"/>
+		<!-- 产品进货价格 -->
+		<result column="commodity_price" property="commodityPrice" jdbcType="DECIMAL"/>
+	</resultMap>
+
+	<!-- 保存,保存全部字段 -->
+	<insert id="insert" parameterType="com.niuka.store.model.CustomerStoreCommodityBatchDetail" keyProperty="id" keyColumn="id" useGeneratedKeys="true">INSERT INTO customer_store_commodity_batch_detail ( `createtime` , `modified_time` , `customer_store_purchase_detail_id` , `customer_commodity_batch_id` , `batch_num` , `unit` , `total_amount` , `commodity_price` ) VALUES ( #{createtime,jdbcType=TIMESTAMP} , #{modifiedTime,jdbcType=TIMESTAMP} , #{customerStorePurchaseDetailId,jdbcType=INTEGER} , #{customerCommodityBatchId,jdbcType=INTEGER} , #{batchNum,jdbcType=INTEGER} , #{unit,jdbcType=CHAR} , #{totalAmount,jdbcType=DECIMAL} , #{commodityPrice,jdbcType=DECIMAL} )</insert>
+	<!-- 根据主键获取单条记录 -->
+	<select id="get" resultMap="queryResultMap" parameterType="com.niuka.store.model.CustomerStoreCommodityBatchDetail">SELECT t.id , t.createtime , t.modified_time , t.customer_store_purchase_detail_id , t.customer_commodity_batch_id , t.batch_num , t.unit , t.total_amount , t.commodity_price FROM customer_store_commodity_batch_detail t WHERE id = #{id,jdbcType=INTEGER}</select>
+	<!-- 更新,更新全部字段 -->
+	<update id="update" parameterType="com.niuka.store.model.CustomerStoreCommodityBatchDetail">UPDATE customer_store_commodity_batch_detail
+		<set>createtime=#{createtime,jdbcType=TIMESTAMP}, modified_time=#{modifiedTime,jdbcType=TIMESTAMP}, customer_store_purchase_detail_id=#{customerStorePurchaseDetailId,jdbcType=INTEGER}, customer_commodity_batch_id=#{customerCommodityBatchId,jdbcType=INTEGER}, batch_num=#{batchNum,jdbcType=INTEGER}, unit=#{unit,jdbcType=CHAR}, total_amount=#{totalAmount,jdbcType=DECIMAL}, commodity_price=#{commodityPrice,jdbcType=DECIMAL},</set> WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+	<delete id="deleteById" parameterType="list" statementType="PREPARED">DELETE FROM customer_store_commodity_batch_detail 
+		<choose>
+			<when test="list == null or list.size() == 0">WHERE 1 != 1</when>
+			<when test="list.size() == 1">WHERE `id` = 
+				<foreach collection="list" item="id">#{id}</foreach> 
+			</when>
+			<otherwise>WHERE `id` in 
+				<foreach collection="list" item="id" open="(" separator="," close=")">#{context.javaPkName}</foreach> 
+			</otherwise>
+		</choose> 
+	</delete>
+</mapper>

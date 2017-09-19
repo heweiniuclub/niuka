@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.niuka.customer.dao.api.CustomerMapper">
+
+	<resultMap id="BaseResultMap" type="com.niuka.customer.model.Customer">
+		<result column="id" property="id" jdbcType="INTEGER"/>
+		<result column="createtime" property="createtime" jdbcType="TIMESTAMP"/>
+		<result column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP"/>
+		<!-- 客户模式(0 O2O模式) -->
+		<result column="customer_mode" property="customerMode" jdbcType="TINYINT"/>
+		<!-- 客户类型(0单店 1多店 2线下) -->
+		<result column="customer_type" property="customerType" jdbcType="TINYINT"/>
+		<result column="customer_name" property="customerName" jdbcType="VARCHAR"/>
+		<result column="customer_phone" property="customerPhone" jdbcType="VARCHAR"/>
+		<result column="customer_address" property="customerAddress" jdbcType="VARCHAR"/>
+		<result column="prov_id" property="provId" jdbcType="INTEGER"/>
+		<result column="city_id" property="cityId" jdbcType="INTEGER"/>
+		<result column="area_id" property="areaId" jdbcType="INTEGER"/>
+		<result column="open_time" property="openTime" jdbcType="TIMESTAMP"/>
+		<result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+		<result column="isvalid" property="isvalid" jdbcType="TINYINT"/>
+		<result column="status" property="status" jdbcType="TINYINT"/>
+		<result column="refuse_reason" property="refuseReason" jdbcType="VARCHAR"/>
+		<result column="refuse_time" property="refuseTime" jdbcType="TIMESTAMP"/>
+		<result column="agent_id" property="agentId" jdbcType="INTEGER"/>
+		<result column="user_id" property="userId" jdbcType="INTEGER"/>
+		<result column="store_num" property="storeNum" jdbcType="INTEGER"/>
+		<result column="account_source" property="accountSource" jdbcType="TINYINT"/>
+	</resultMap>
+  	
+  	<sql id="Base_Column_List" >
+    	id,createtime,modified_time,customer_mode,customer_type,customer_name,customer_phone,customer_address,prov_id,city_id,
+    	area_id,open_time,end_time,isvalid,status,refuse_reason,refuse_time,agent_id,user_id,store_num,account_source
+    </sql>
+    
+    <select id="findCustomerExistByCustomerId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		  *
+		from customer
+		where id = #{customerId,jdbcType=INTEGER}
+	</select>
+	
+	<!-- 保存用户注册信息 -->
+	<insert id="insert" parameterType="com.niuka.customer.model.Customer" statementType="PREPARED" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO customer(
+			customer_name
+		) 
+		VALUES (
+			#{customerName}
+		)
+	</insert>
+	
+</mapper>

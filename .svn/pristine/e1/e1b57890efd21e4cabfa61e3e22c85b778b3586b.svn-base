@@ -1,0 +1,29 @@
+package com.niuka.systemset.service;
+
+import com.niuka.common.service.mybatis.impl.ServiceImpl;
+import com.niuka.systemset.dao.ProvinceDao;
+import com.niuka.systemset.model.Province;
+import com.niuka.systemset.rpc.ProvinceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service("provinceservice")
+public class ProvinceServiceImpl extends ServiceImpl<ProvinceDao, Province, Integer> implements ProvinceService {
+
+
+	@Autowired
+	public void setDao(ProvinceDao dao) {
+		this.dao = dao;
+	}
+
+	/**
+	 * 查询所有的省份信息
+	 *
+	 * @return
+	 */
+	@Override
+	public List<Province> queryAllProvince() {
+		return dao.queryAllProvince();
+	}
+}
